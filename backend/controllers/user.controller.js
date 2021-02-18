@@ -18,19 +18,29 @@ exports.create = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-  if (!schema.validate(req.body.password)) {
+  // Verify all inputs
+  if (req.body.firstName.length > 50) {
+    return res.status(400).json({error: 'Votre prénom doit contenir 50 caractères maximum'})
+  } else if (req.body.lastName.length > 50) {
+    return res.status(400).json({error: 'Votre nom doit contenir 50 caractères maximum'})     
+  } else if (req.body.job.length > 100) {
+    return res.status(400).json({error: 'Votre poste doit contenir 100 caractères maximum'})     
+  } else if (req.body.state > 2) {
+    return res.status(400).json({error: 'Une erreur est apparue'})     
+  } else if (!schema.validate(req.body.password)) {
     return res.status(400).json({error : 'Mot de passe non conforme : Votre mot doit contenir au moins 8 caractères avec une majuscule, une minuscule, 2 chiffres et aucun espace'});
   } else if (schema.validate(req.body.password)) {
     if (mailRegex.test(req.body.email)) {
-      bcrypt
-      .hash(req.body.password, 10)
-      .then(hash => {
+      // bcrypt
+      // .hash(req.body.password, 10)
+      // .then(hash => {
         const user = new User({
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           job: req.body.job,
           email: req.body.email,
-          password: hash
+          // password: hash
+          password: req.body.password
         })
         User.create(user, (err, data) => {
         if (err)
@@ -40,15 +50,32 @@ exports.create = (req, res) => {
           });
         else res.send(data);
         });
-      })
-      .catch(error => {
-        res.status(500).json({ error });
-      });
+      // })
+      // .catch(error => {
+      //   res.status(500).json({ error });
+      // });
     } else {
       return res.status(400).json({error: 'Email non conforme'})
     }
   }
 };
+// exports.authentification = (req,res) => {
+//   var email = req.body.email;
+// 	var password = req.body.password;
+//   if (email && password) {
+//     User.authentification([email, password], (err,data) => {
+//       if (err)
+//         res.status(500).send({
+//           message:
+//             err.message || "Some error occurred while creating the User."
+//         });
+//       else res.send(data);
+//     })
+// 	} else {
+// 		response.send('Please enter Username and Password!');
+// 		response.end();
+// 	}
+// }
 // Retrieve all users from the database.
 exports.findAll = (req, res) => {
   User.getAll((err, data) => {

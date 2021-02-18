@@ -1,5 +1,5 @@
-const Post = require("../models/post.model.js");
-// Create and Save a new post
+const Comment = require("../models/comment.model.js");
+// Create and Save a new comment
 exports.create = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -9,58 +9,56 @@ exports.create = (req, res) => {
   }
   // MULTER
   if (req.body.file){
-    console.log('oui');
     req.body.file = `${req.protocol}://${req.get("host")}/files/${req.body.file.filename}`
   }
   // VERIFICATION INPUTS
   if (req.body.state && req.body.state !== 1){
     return res.status(400).json({error: 'Une erreur est apparue'})
   }
-  // Create a post
-  const post = new Post({
+  // Create a comment
+  const comment = new Comment({
     idUser: req.body.idUser,
-    title: req.body.title,
+    idPost: req.params.postId,
     content: req.body.content,
-    file: req.body.file
   });
-  // Save post in the database
-  Post.create(post, (err, data) => {
+  // Save comment in the database
+  Comment.create(comment, (err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Post."
+          err.message || "Some error occurred while creating the comment."
       });
     else res.send(data);
   });
 };
-// Retrieve all posts from the database.
+// Retrieve all comments from the database.
 exports.findAll = (req, res) => {
-  Post.getAll((err, data) => {
+  Comment.getAll((err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving posts."
+          err.message || "Some error occurred while retrieving comments."
       });
     else res.send(data);
   });
 };
-// Find a single post with a postId
+// Find a single comment with a commentId
 exports.findOne = (req, res) => {
-  Post.findById(req.params.postId, (err, data) => {
+  Comment.findById(req.params.commentId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found post with id ${req.params.postId}.`
+          message: `Not found comment with id ${req.params.commentId}.`
         });
       } else {
         res.status(500).send({
-          message: "Error retrieving post with id " + req.params.postId
+          message: "Error retrieving comment with id " + req.params.commentId
         });
       }
     } else res.send(data);
   });
 };
-// Update a post identified by the postId in the request
+// Update a comment identified by the commentId in the request
 exports.update = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -70,48 +68,48 @@ exports.update = (req, res) => {
   }
   const dateUpdate = new Date();
   const state = 1;
-  Post.updateById(
-    req.params.postId,dateUpdate,state,
-    new Post(req.body),
+  Comment.updateById(
+    req.params.commentId,dateUpdate,state,
+    new Comment(req.body),
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: `Not found post with id ${req.params.postId}.`
+            message: `Not found comment with id ${req.params.commentId}.`
           });
         } else {
           res.status(500).send({
-            message: "Error updating post with id " + req.params.postId
+            message: "Error updating comment with id " + req.params.commentId
           });
         }
       } else res.send(data);
     }
   );
 };
-// Delete a post with the specified postId in the request
+// Delete a comment with the specified commentId in the request
 exports.delete = (req, res) => {
-  Post.remove(req.params.postId, (err, data) => {
+  Comment.remove(req.params.commentId, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found post with id ${req.params.postId}.`
+          message: `Not found comment with id ${req.params.commentId}.`
         });
       } else {
         res.status(500).send({
-          message: "Could not delete post with id " + req.params.postId
+          message: "Could not delete comment with id " + req.params.commentId
         });
       }
-    } else res.send({ message: `post was deleted successfully!` });
+    } else res.send({ message: `comment was deleted successfully!` });
   });
 };
-// Delete all posts from the database.
+// Delete all comments from the database.
 exports.deleteAll = (req, res) => {
-  Post.removeAll((err, data) => {
+  Comment.removeAll((err, data) => {
     if (err)
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all posts."
+          err.message || "Some error occurred while removing all comments."
       });
-    else res.send({ message: `All posts were deleted successfully!` });
+    else res.send({ message: `All comments were deleted successfully!` });
   });
 };

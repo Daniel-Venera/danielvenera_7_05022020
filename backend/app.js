@@ -1,4 +1,6 @@
+require('dotenv').config();
 const express = require("express");
+var session = require('express-session');
 const bodyParser = require("body-parser");
 const app = express();
 app.use((req, res, next) => {
@@ -7,6 +9,11 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
   next();
 });
+app.use(session({
+	secret: process.env.SESSION,
+	resave: true,
+	saveUninitialized: true
+}));
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
 // parse requests of content-type: application/x-www-form-urlencoded
@@ -17,3 +24,4 @@ app.listen(3000, () => {
 });
 require("././routes/user.routes.js")(app);
 require("././routes/post.routes.js")(app);
+require("././routes/comment.routes.js")(app);

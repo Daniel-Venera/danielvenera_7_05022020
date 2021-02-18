@@ -1,7 +1,8 @@
+const multer = require("../middleware/multer-config");
 module.exports = app => {
   const posts = require("../controllers/post.controller.js");
   // Create a new post
-  app.post("/posts", posts.create);
+  app.post("/posts", multer, posts.create);
   // Retrieve all posts
   app.get("/posts", posts.findAll);
   // Retrieve a single post with postId

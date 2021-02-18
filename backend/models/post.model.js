@@ -4,8 +4,23 @@ const Post = function(post) {
   this.idUser = post.idUser;
   this.title = post.title;
   this.content = post.content;
+  this.file = post.file;
 };
 Post.create = (newPost, result) => {
+  // sql.query(`SELECT * FROM users WHERE id = ${newPost.idUser}`, (err, res) => {
+  //   if (err) {
+  //     console.log("error: ", err);
+  //     result(err, null);
+  //     return;
+  //   }
+  //   if (res.length) {
+  //     console.log("found user: ", res[0]);
+  //     result(null, res[0]);
+  //     return;
+  //   }
+  //   // not found user with the id
+  //   result({ kind: "not_found" }, null);
+  // });
   sql.query("INSERT INTO posts SET ?", newPost, (err, res) => {
     if (err) {
       console.log("error: ", err);
@@ -43,10 +58,10 @@ Post.getAll = result => {
     result(null, res);
   });
 };
-Post.updateById = (id, post, result) => {
+Post.updateById = (id, dateUpdate, state, post, result) => {
   sql.query(
-    "UPDATE posts SET idUser = ?, title = ?, content = ? WHERE id = ?",
-    [post.idUser, post.title, post.content, id],
+    "UPDATE posts SET idUser = ?, title = ?, content = ?, dateUpdate = ?, state = ? WHERE id = ?",
+    [post.idUser, post.title, post.content, dateUpdate, state, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

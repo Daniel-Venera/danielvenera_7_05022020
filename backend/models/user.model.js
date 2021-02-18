@@ -92,4 +92,23 @@ User.removeAll = result => {
     result(null, res);
   });
 };
+// User.authentification = (email, password, result) => {
+//   sql.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password], (err,res) => {
+//     if (err) {
+//       console.log("error: ", err);
+//       result(null, err);
+//       return;
+//     }
+//     if (res.length > 0) {
+//       request.session.loggedin = true;
+//       request.session.email = email;
+//       console.log(request.session.loggedin);
+//       console.log(request.session.email);
+//       // response.redirect('/home');
+//     } else {
+//       console.log('Incorrect Email and/or Password!');
+//     }			
+//     result(null, res);
+//   });
+// }
 module.exports = User;
