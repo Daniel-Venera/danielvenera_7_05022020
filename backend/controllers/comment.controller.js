@@ -17,8 +17,8 @@ exports.create = (req, res) => {
   }
   // Create a comment
   const comment = new Comment({
-    idUser: req.body.idUser,
-    idPost: req.params.postId,
+    user_id: req.body.user_id,
+    post_id: req.params.post_id,
     content: req.body.content,
   });
   // Save comment in the database
@@ -66,10 +66,10 @@ exports.update = (req, res) => {
       message: "Content can not be empty!"
     });
   }
-  const dateUpdate = new Date();
+  const date_update = new Date();
   const state = 1;
   Comment.updateById(
-    req.params.commentId,dateUpdate,state,
+    req.params.commentId,date_update,state,
     new Comment(req.body),
     (err, data) => {
       if (err) {

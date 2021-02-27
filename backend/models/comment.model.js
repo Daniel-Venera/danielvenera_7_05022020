@@ -1,8 +1,8 @@
 const sql = require("./db.js");
 // constructor
 const Comment = function(comment) {
-  this.idUser = comment.idUser;
-  this.idPost = comment.idPost;
+  this.user_id = comment.user_id;
+  this.post_id = comment.post_id;
   this.content = comment.content;
 };
 Comment.create = (newComment, result) => {
@@ -43,10 +43,10 @@ Comment.getAll = result => {
     result(null, res);
   });
 };
-Comment.updateById = (id, dateUpdate, state, comment, result) => {
+Comment.updateById = (id, date_update, state, comment, result) => {
   sql.query(
-    "UPDATE comments SET idUser = ?, idPost = ?, content = ?, dateUpdate = ?, state = ? WHERE id = ?",
-    [comment.idUser, comment.idPost, comment.content, dateUpdate, state, id],
+    "UPDATE comments SET user_id = ?, post_id = ?, content = ?, date_update = ?, state = ? WHERE id = ?",
+    [comment.user_id, comment.post_id, comment.content, date_update, state, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

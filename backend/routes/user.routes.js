@@ -14,4 +14,6 @@ module.exports = app => {
   app.delete("/users", users.deleteAll);
   // Authentificate user
   // app.post('/auth', users.authentification); 
+  //Login user
+  app.post("/login", users.login);
 };
