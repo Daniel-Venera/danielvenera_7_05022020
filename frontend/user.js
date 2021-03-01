@@ -13,6 +13,8 @@ function callApi(url) {
         .catch(err => console.error(err));
 }
 function showuser(userData) {
+    if (userData.user_state == 0) {
+    }
     var userVue = new Vue({
         el: "#user",
         data: {

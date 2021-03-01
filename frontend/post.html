@@ -7,12 +7,33 @@
         <title id="postTitle">{{postTitle}}</title>
     </head>
     <body>
+        <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
         <div id="post">
             <p>
                 {{post.post_title}}
             </p>
         </div>
+        <span id="commentMessage"></span>
+        <form id="commentForm">
+            <textarea name="comment_content" id="commentContent" cols="30" rows="10"></textarea>
+            <button type="submit">Commenter</button>
+        </form>
+        <section>
+            <h2>
+                Commentaires
+            </h2>
+            <div id="comments">
+                <ul>
+                    <li v-for="comment in comments">
+                        Auteur : {{comment.user_first_name}} {{comment.user_last_name}} <br />
+                        Date : {{comment.comment_date_creation}} <br />
+                        Contenu : {{comment.comment_content}}
+                        <br /><br />
+                    </li>
+                </ul>
+            </div>
+        </section>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script type="module" src="post.js"></script>
+        <script src="post.js"></script>
     </body>
 </html>

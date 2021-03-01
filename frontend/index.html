@@ -10,11 +10,14 @@
         <div id="home">
             <ol>
                 <li v-for="todo in todos">
-                    {{todo.user_first_name}} {{todo.post_title}}
+                    Auteur : {{todo.user_first_name}} <br />
+                    ID: {{todo.user_id}} <br />
+                    Titre de l'article : {{todo.post_title}}
+                    <a :href="`post.html?id=${todo.post_id}`">Lire</a>
                 </li>
             </ol>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script type="module" src="index.js"></script>
+        <script src="index.js"></script>
     </body>
 </html>

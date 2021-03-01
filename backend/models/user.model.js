@@ -9,7 +9,6 @@ const User = function(user) {
     this.user_password = user.user_password;
 };
 User.create = (newUser, result) => {
-    console.log(`SELECT * FROM users WHERE user_email = '${newUser.user_email}'`);
     sql.query(`SELECT * FROM users WHERE user_email = '${newUser.user_email}'`, (err, res) => {
         if (err || res == false) {
             console.log("aucun user n'a cette adresse mail");
