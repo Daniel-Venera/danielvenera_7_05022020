@@ -4,19 +4,23 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
         <title>Sign up</title>
     </head>
     <body>
-        <div id="signUp">
+        <div id="root">
             <span id="signUpMessage"></span>
             <form id="signUpForm">
-                <input type="text" name="user_first_name" id="userFirstName" placeholder="Prénom" />
-                <input type="text" name="user_last_name" id="userLastName" placeholder="Nom" />
-                <input type="text" name="user_job" id="userJob" placeholder="Poste" />
-                <input type="email" name="user_email" id="userEmail" placeholder="Email" />
-                <input type="password" name="user_password" id="userPassword" placeholder="Mot de passe" />
-                <button type="submit">S'inscrire</button>
+                <input type="text" name="user_first_name" id="userFirstName" placeholder="Prénom" v-model="firstName" />
+                <input type="text" name="user_last_name" id="userLastName" placeholder="Nom" v-model="lastName" />
+                <input type="text" name="user_job" id="userJob" placeholder="Poste" v-model="job" />
+                <input type="email" name="user_email" id="userEmail" placeholder="Email" v-model="email" />
+                <input type="password" name="user_password" id="userPassword" placeholder="Mot de passe" v-model="password" />
+                <button type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">S'inscrire</button>
             </form>
+        </div>
+        <div>
+            <p>Déjà un compte ? <a href="login.html">Connectez-vous !</a></p>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="signup.js"></script>

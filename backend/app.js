@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const rateLimit = require("express-rate-limit");
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100
-});
+// const rateLimit = require("express-rate-limit");
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000,
+//     max: 100
+// });
+const jwt = require("jsonwebtoken");
 var session = require("express-session");
 const bodyParser = require("body-parser");
 var clean = require("xss-clean/lib/xss").clean;
@@ -18,7 +19,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use(helmet());
-app.use(limiter);
+// app.use(limiter);
 app.use(
     session({
         secret: process.env.SESSION,
@@ -33,6 +34,43 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // set port, listen for requests
 app.listen(3000, () => {
     console.log("Server is running on port 3000.");
+});
+//Check to make sure header is not undefined, if so, return Forbidden (403)
+const checkToken = (req, res, next) => {
+    const header = req.headers["authorization"];
+    if (typeof header !== "undefined") {
+        console.log("!!!!!!!!!!----!!!!!!!!!");
+        console.log("undefined");
+        console.log("!!!!!!!!!!----!!!!!!!!!");
+        const bearer = header.split(" ");
+        const token = bearer[1];
+        req.token = token;
+        next();
+    } else {
+        //If header is undefined return Forbidden (403)
+        res.status(403).json({ erreur: "accès non autorisé" });
+    }
+};
+//This is a protected route
+app.get("/user/data", checkToken, (req, res) => {
+    //verify the JWT token generated for the user
+    jwt.verify(req.token, "RANDOM_TOKEN_SECRET", (err, authorizedData) => {
+        console.log("!!!!!!!!!!!!!!!!");
+        console.log(authorizedData);
+        console.log("!!!!!!!!!!!!!!!!");
+        if (err) {
+            //If error send Forbidden (403)
+            console.log("ERROR: Could not connect to the protected route");
+            res.sendStatus(403);
+        } else {
+            //If token is successfully verified, we can send the autorized data
+            res.json({
+                message: "Successful log in",
+                authorizedData
+            });
+            console.log("SUCCESS: Connected to protected route");
+        }
+    });
 });
 require("././routes/user.routes.js")(app);
 require("././routes/post.routes.js")(app);

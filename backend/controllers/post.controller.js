@@ -8,14 +8,10 @@ exports.create = (req, res) => {
         });
     }
     // MULTER
-    if (req.body.post_file) {
-        console.log("oui");
-        req.body.post_file = `${req.protocol}://${req.get("host")}/post_files/${req.body.post_file.post_filename}`;
-    }
-    // VERIFICATION INPUTS
-    if (req.body.post_state && req.body.post_state !== 0) {
-        return res.status(400).json({ error: "Une erreur est apparue" });
-    }
+    // if (req.body.post_file) {
+    //     console.log("oui");
+    //     req.body.post_file = `${req.protocol}://${req.get("host")}/post_files/${req.body.post_file.post_filename}`;
+    // }
     if (req.body.post_title.length > 150) {
         return res.status(400).json({ error: "Le titre doit contenir 150 caractères maximum" });
     }
@@ -28,7 +24,7 @@ exports.create = (req, res) => {
         post_title: req.body.post_title,
         post_content: req.body.post_content,
         post_file: req.body.post_file,
-        post_state: 0
+        post_state: req.body.post_state
     });
     // Save post in the database
     Post.create(post, (err, data) => {
@@ -117,5 +113,21 @@ exports.deleteAll = (req, res) => {
                 message: err.message || "Some error occurred while removing all posts."
             });
         else res.send({ message: `Tous les articles ont été supprimés avec succès!` });
+    });
+};
+//
+exports.findOneById = (req, res) => {
+    Post.findPostByUserId(req.params.userId, (err, data) => {
+        if (err) {
+            // if (err.kind === "not_found") {
+            //     res.status(404).send({
+            //         message: `Not found post with id ${req.params.postId}.`
+            //     });
+            // } else {
+            //     res.status(500).send({
+            //         message: "Error retrieving post with id " + req.params.postId
+            //     });
+            // }
+        } else res.send(data);
     });
 };

@@ -5,7 +5,11 @@ function callApiPost(url, options) {
             return response.json();
         })
         .then(function(response) {
-            document.querySelector("#createPostMessage").textContent = "Merci ! Un administrateut valider votre article dans les prochains jours";
+            if (response.post_state == 1) {
+                location.href = "index.html?post_created=admin";
+            } else {
+                location.href = "index.html?post_created=user";
+            }
         })
         .catch(err => console.error(err));
 }
@@ -14,7 +18,9 @@ document.querySelector("#createPostForm").addEventListener("submit", function(e)
     var post_title = document.querySelector("#postTitle").value;
     var post_content = document.querySelector("#postContent").value;
     var user_id = sessionStorage.getItem("userId");
-    let createPostInfos = { user_id, post_title, post_content };
+    var post_state = sessionStorage.getItem("userId") == 1 ? "1" : "0";
+    let createPostInfos = { user_id, post_title, post_content, post_state };
+    console.log(createPostInfos);
     const options = {
         method: "post",
         body: JSON.stringify(createPostInfos),

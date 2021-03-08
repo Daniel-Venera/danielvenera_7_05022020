@@ -31,3 +31,13 @@ document.querySelector("#signUpForm").addEventListener("submit", function(e) {
     };
     callApiPost(urlApi, options);
 });
+signUpVue = new Vue({
+    el: "#root",
+    data: {
+        firstName: "",
+        lastName: "",
+        job: "",
+        email: "",
+        password: ""
+    }
+});

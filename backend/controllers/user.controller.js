@@ -1,3 +1,4 @@
+var session = require("express-session");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
@@ -188,6 +189,7 @@ exports.login = (req, res) => {
                         return;
                     }
                     console.log("milieu bcrypt");
+                    req.session.loggedin = true;
                     res.status(200).json({
                         userId: user.user_id,
                         token: jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" })

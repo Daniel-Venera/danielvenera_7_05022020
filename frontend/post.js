@@ -2,7 +2,6 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const postId = urlParams.get("id");
 const postUrlApi = "http://localhost:3000/posts/" + postId;
-const commentUrlApi = "http://localhost:3000/posts/" + postId + "/comments";
 function postGetApi(url) {
     return fetch(url)
         .then(function(response) {
@@ -14,6 +13,20 @@ function postGetApi(url) {
         .catch(err => console.error(err));
 }
 function showPost(postData) {
+    if (postData.post_state == 0 && sessionStorage.getItem("userId") == 1) {
+        document.querySelector("#postValidation").style.display = "block";
+        document.querySelector("#postValidation").addEventListener("click", function() {
+            let UpdateInfos = { user_id: postData.user_id, post_title: postData.post_title, post_content: postData.post_content, post_state: 1 };
+            const options = {
+                method: "put",
+                body: JSON.stringify(UpdateInfos),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            };
+            postApiUpdate(postUrlApi, options);
+        });
+    }
     var postVue = new Vue({
         el: "#post",
         data: {
@@ -31,6 +44,7 @@ postGetApi(postUrlApi).then(function(postData) {
     showPost(postData);
 });
 //Commenter
+const commentUrlApi = "http://localhost:3000/posts/" + postId + "/comments";
 function commentApiPost(url, options) {
     fetch(url, options)
         .then(function(response) {
@@ -70,6 +84,9 @@ function commentsPush(data) {
         if (e.comment_state > 0) {
             comments.push(e);
         }
+        if (sessionStorage.getItem("userId") == 1 && e.comment_state == 0) {
+            comments.push(e);
+        }
     });
 }
 commentGetApi(commentUrlApi).then(function(data) {
@@ -83,5 +100,42 @@ var commentsVue = new Vue({
     el: "#comments",
     data: {
         comments: comments
+    },
+    methods: {
+        validate: function(comment) {
+            const UpdateInfos = { user_id: comment.user_id, post_id: comment.post_id, comment_content: comment.comment_content, comment_state: 1 };
+            const options = {
+                method: "put",
+                body: JSON.stringify(UpdateInfos),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            };
+            commentApiUpdate(commentUrlApi + "/" + comment.comment_id, options);
+        }
     }
 });
+document.querySelector("#postValidation").addEventListener("click", function() {});
+//Valider post
+function postApiUpdate(url, options) {
+    fetch(url, options)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(response) {
+            document.querySelector("#postValidation").style.display = "none";
+            document.querySelector("#postMessage").textContent = "Merci ! L'article a bien été validé";
+        })
+        .catch(err => console.error(err));
+}
+// Valider Commentaire
+function commentApiUpdate(url, options) {
+    fetch(url, options)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(response) {
+            document.querySelector("#commentMessage").textContent = "Merci ! Le commentaire a bien été validé";
+        })
+        .catch(err => console.error(err));
+}

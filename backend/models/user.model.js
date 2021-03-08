@@ -43,7 +43,7 @@ User.findById = (userId, result) => {
     });
 };
 User.getAll = result => {
-    sql.query("SELECT * FROM users", (err, res) => {
+    sql.query("SELECT * FROM users ORDER BY user_date_creation DESC", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -103,8 +103,6 @@ User.login = (user_email, result) => {
             result(err, null);
             return;
         }
-        console.log(res.length);
-        console.log(res.length);
         if (res.length) {
             if (res[0].user_state == 0) {
                 result({ kind: "user_state_0" }, null);

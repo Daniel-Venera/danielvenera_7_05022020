@@ -8,7 +8,21 @@
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     </head>
     <body>
-        <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
+        <header>
+            <nav>
+                <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
+                <div>
+                    <a href="createpost.html">Créer un article</a>
+                </div>
+                <div id="userId">
+                    <a :href="`user.html?id=${userId}`">Mon compte</a>
+                </div>
+                <button id="logOut">Déconnexion</button>
+                <div id="admin" v-if="admin">
+                    <a href="admin.html" id="admin">Espace Admin</a>
+                </div>
+            </nav>
+        </header>
         <div id="user">
             <p>
                 Prénom : {{user.user_first_name}} <br />
@@ -17,7 +31,27 @@
                 State : {{user.user_state}} <br />
             </p>
         </div>
+        <span id="userMessage"></span>
+        <form id="userForm" style="display: none;">
+            <input type="text" name="user_first_name" id="userFirstName" placeholder="Prénom" />
+            <input type="text" name="user_last_name" id="userLastName" placeholder="Nom" />
+            <input type="text" name="user_job" id="userJob" placeholder="Poste" />
+            <input type="email" name="user_email" id="userEmail" placeholder="Email" />
+            <input type="password" name="user_password" id="userPassword" placeholder="Mot de passe" />
+            <button type="submit">Mettre à jour</button>
+        </form>
+        <h2>Articles</h2>
+        <span id="postsMessage"></span>
+        <ul id="posts">
+            <li v-for="post in posts">
+                <a :href="`post.html?id=${post.post_id}`">{{post.post_title}}</a>
+            </li>
+        </ul>
+        <button id="userDelete" type="button" style="display: none">Supprimer le compte</button>
+        <button id="userValidate" type="button" style="display: none">Valider le compte</button>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="user.js"></script>
+        <script src="userid.js"></script>
+        <script src="logout.js"></script>
     </body>
 </html>

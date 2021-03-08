@@ -73,7 +73,7 @@ Comment.findById = (postId, commentId, result) => {
     });
 };
 Comment.getAll = (postId, result) => {
-    sql.query(`SELECT * FROM comments  INNER JOIN users ON comments.user_id = users.user_id   WHERE post_id=${postId};`, (err, res) => {
+    sql.query(`SELECT * FROM comments  INNER JOIN users ON comments.user_id = users.user_id   WHERE post_id=${postId} ORDER BY comment_date_creation DESC;`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -84,7 +84,7 @@ Comment.getAll = (postId, result) => {
     });
 };
 Comment.updateById = (id, comment, result) => {
-    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = 0 WHERE comment_id = ${id}`, (err, res) => {
+    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = 1 WHERE comment_id = ${id}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
