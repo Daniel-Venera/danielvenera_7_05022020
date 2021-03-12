@@ -54,7 +54,7 @@ exports.create = (req, res) => {
                     User.create(user, (err, data) => {
                         if (err)
                             res.status(500).send({
-                                message: err.message || "Some error occurred while creating the User."
+                                error: err.message || "Some error occurred while creating the User."
                             });
                         else res.send(data);
                     });
@@ -70,6 +70,15 @@ exports.create = (req, res) => {
 // Retrieve all users from the database.
 exports.findAll = (req, res) => {
     User.getAll((err, data) => {
+        if (err)
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving users."
+            });
+        else res.send(data);
+    });
+};
+exports.findAllToValidate = (req, res) => {
+    User.getAllToValidate((err, data) => {
         if (err)
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving users."
@@ -101,28 +110,57 @@ exports.update = (req, res) => {
             message: "Content can not be empty!"
         });
     }
-    console.log(req.body.user_password);
-    bcrypt
-        .hash(req.body.user_password, 10)
-        .then(hash => {
-            console.log(hash);
-            User.updateById(req.params.userId, new User({ ...req.body, user_password: hash }), (err, data) => {
-                if (err) {
-                    if (err.kind === "not_found") {
-                        res.status(404).send({
-                            message: `Not found User with id ${req.params.userId}.`
-                        });
-                    } else {
-                        res.status(500).send({
-                            message: "Error updating User with id " + req.params.userId
-                        });
-                    }
-                } else res.send(data);
-            });
-        })
-        .catch(error => {
-            res.status(500).json({ error: "erreur" });
-        });
+    if (req.body.user_first_name.length > 50) {
+        return res.status(400).json({ error: "Votre prénom doit contenir 50 caractères maximum" });
+    } else if (req.body.user_last_name.length > 50) {
+        return res.status(400).json({ error: "Votre nom doit contenir 50 caractères maximum" });
+    } else if (req.body.user_job.length > 100) {
+        return res.status(400).json({ error: "Votre poste doit contenir 100 caractères maximum" });
+    } else if (req.body.user_state > 3) {
+        return res.status(400).json({ error: "Une erreur est apparue" });
+    } else if (!schema.validate(req.body.user_password)) {
+        return res.status(400).json({ error: "Mot de passe non conforme : Votre mot doit contenir au moins 8 caractères avec une majuscule, une minuscule, 2 chiffres et aucun espace" });
+    } else if (schema.validate(req.body.user_password)) {
+        if (mailRegex.test(req.body.user_email)) {
+            bcrypt
+                .hash(req.body.user_password, 10)
+                .then(hash => {
+                    console.log(hash);
+                    User.updateById(req.params.userId, new User({ ...req.body, user_password: hash }), (err, data) => {
+                        if (err) {
+                            if (err.kind === "not_found") {
+                                res.status(404).send({
+                                    message: `Not found User with id ${req.params.userId}.`
+                                });
+                            } else {
+                                res.status(500).send({
+                                    message: "Error updating User with id " + req.params.userId
+                                });
+                            }
+                        } else res.send(data);
+                    });
+                })
+                .catch(error => {
+                    res.status(500).json({ error: "erreur" });
+                });
+        }
+    }
+};
+// Update a user identified by the userId in the request
+exports.validate = (req, res) => {
+    User.validateById(req.params.userId, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                res.status(404).send({
+                    error: `Not found User with id ${req.params.userId}.`
+                });
+            } else {
+                res.status(500).send({
+                    error: "Error updating User with id " + req.params.userId
+                });
+            }
+        } else res.send(data);
+    });
 };
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
@@ -190,6 +228,7 @@ exports.login = (req, res) => {
                     }
                     console.log("milieu bcrypt");
                     req.session.loggedin = true;
+                    console.log(jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" }));
                     res.status(200).json({
                         userId: user.user_id,
                         token: jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" })

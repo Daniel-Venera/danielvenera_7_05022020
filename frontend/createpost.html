@@ -23,23 +23,22 @@
                 </div>
             </nav>
         </header>
-        <div id="createPost">
-            <span id="createPostMessage"></span>
-            <form id="createPostForm">
+        <div id="root">
+            <form @submit.prevent="createPost">
                 <div>
                     <label for="post_title">Titre</label>
-                    <input type="text" name="post_title" id="postTitle" placeholder="Titre" />
+                    <input type="text" v-model="post_title" placeholder="Titre" />
                 </div>
                 <div>
                     <label for="post_content">Contenu</label>
-                    <textarea name="post_content" id="postContent" cols="30" rows="10" placeholder="Contenu"></textarea>
+                    <textarea v-model="post_content" cols="30" rows="10" placeholder="Contenu"></textarea>
                 </div>
+                <input type="file" v-model="post_file" accept="image/*" />
                 <button type="submit">Créer un article</button>
             </form>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="createpost.js"></script>
-        <script src="userid.js"></script>
-        <script src="logout.js"></script>
+        <script src="main.js"></script>
     </body>
 </html>

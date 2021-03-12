@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title id="userTitle">{{userTitle}}</title>
+        <title id="title">{{title}}</title>
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     </head>
     <body>
@@ -23,35 +23,42 @@
                 </div>
             </nav>
         </header>
-        <div id="user">
-            <p>
-                Prénom : {{user.user_first_name}} <br />
-                Nom : {{user.user_last_name}} <br />
-                Poste : {{user.user_job}} <br />
-                State : {{user.user_state}} <br />
-            </p>
+        <div id="root">
+            <span v-if="updateMessage">{{updateMessage}}</span>
+            <form v-if="isCurrentUser" @submit.prevent="update">
+                <input type="text" v-model="firstName" placeholder="Prénom" />
+                <input type="text" v-model="lastName" placeholder="Nom" />
+                <input type="text" v-model="job" placeholder="Poste" />
+                <input type="email" v-model="email" placeholder="Email" />
+                <input type="password" v-model="password" placeholder="mot de passe" />
+                <button type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">Mettre à jour</button>
+            </form>
+            <div v-else>
+                Prénom : {{firstName}} <br />
+                Nom : {{lastName}} <br />
+                Poste : {{job}} <br />
+                Email : {{email}} <br />
+            </div>
+            <button v-if="isCurrentUser || currentUserId == 1" @click="deleteUser">Supprimer le compte</button>
+            <button v-if="!isUserValidate" @click="validateUser">Valider le compte</button>
+            <h2>Articles</h2>
+            <ul v-if="userPosts.length > 0">
+                <li v-for="userPost in userPosts">
+                    <a :href="`post.html?id=${userPost.post_id}`">{{userPost.post_title}}</a>
+                </li>
+            </ul>
+            <span v-else>Aucun article</span>
+            <h2>Commentaires</h2>
+            <ul v-if="userComments.length > 0">
+                <li v-for="userComment in userComments">
+                    {{userComment.comment_content}} dans
+                    <a :href="`post.html?id=${userComment.post_id}`">cet article</a>
+                </li>
+            </ul>
+            <span v-else>Aucun commentaire</span>
         </div>
-        <span id="userMessage"></span>
-        <form id="userForm" style="display: none;">
-            <input type="text" name="user_first_name" id="userFirstName" placeholder="Prénom" />
-            <input type="text" name="user_last_name" id="userLastName" placeholder="Nom" />
-            <input type="text" name="user_job" id="userJob" placeholder="Poste" />
-            <input type="email" name="user_email" id="userEmail" placeholder="Email" />
-            <input type="password" name="user_password" id="userPassword" placeholder="Mot de passe" />
-            <button type="submit">Mettre à jour</button>
-        </form>
-        <h2>Articles</h2>
-        <span id="postsMessage"></span>
-        <ul id="posts">
-            <li v-for="post in posts">
-                <a :href="`post.html?id=${post.post_id}`">{{post.post_title}}</a>
-            </li>
-        </ul>
-        <button id="userDelete" type="button" style="display: none">Supprimer le compte</button>
-        <button id="userValidate" type="button" style="display: none">Valider le compte</button>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="user.js"></script>
-        <script src="userid.js"></script>
-        <script src="logout.js"></script>
+        <script src="main.js"></script>
     </body>
 </html>

@@ -4,6 +4,7 @@ const Comment = function(comment) {
     this.user_id = comment.user_id;
     this.post_id = comment.post_id;
     this.comment_content = comment.comment_content;
+    this.comment_state = comment.comment_state;
 };
 //Date
 var dateObj = new Date();
@@ -19,7 +20,6 @@ Comment.create = (newComment, result) => {
             result(err, null);
             return;
         }
-        console.log(res.length);
         if (res.length) {
             sql.query(`SELECT * FROM posts WHERE post_id = ${newComment.post_id}`, (err, res) => {
                 console.log(res);
@@ -73,6 +73,28 @@ Comment.findById = (postId, commentId, result) => {
     });
 };
 Comment.getAll = (postId, result) => {
+    sql.query(`SELECT * FROM comments  INNER JOIN users ON comments.user_id = users.user_id   WHERE post_id=${postId} AND comment_state = 1 ORDER BY comment_date_creation DESC;`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log("comments: ", res);
+        result(null, res);
+    });
+};
+Comment.getAllByUserId = (userId, result) => {
+    sql.query(`SELECT * FROM comments  WHERE user_id=${userId} AND comment_state = 1 ORDER BY comment_date_creation DESC;`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log("comments: ", res);
+        result(null, res);
+    });
+};
+Comment.getAllToValidateByPostId = (postId, result) => {
     sql.query(`SELECT * FROM comments  INNER JOIN users ON comments.user_id = users.user_id   WHERE post_id=${postId} ORDER BY comment_date_creation DESC;`, (err, res) => {
         if (err) {
             console.log("error: ", err);
@@ -83,8 +105,19 @@ Comment.getAll = (postId, result) => {
         result(null, res);
     });
 };
+Comment.getAllToValidate = result => {
+    sql.query(`SELECT * FROM comments INNER JOIN users ON comments.user_id = users.user_id   WHERE comment_state = 0 ORDER BY comment_date_creation DESC;`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log("comments: ", res);
+        result(null, res);
+    });
+};
 Comment.updateById = (id, comment, result) => {
-    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = 1 WHERE comment_id = ${id}`, (err, res) => {
+    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = ${comment.comment_state} WHERE comment_id = ${id}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -97,6 +130,22 @@ Comment.updateById = (id, comment, result) => {
         }
         console.log("updated comment: ", { comment_id: id, ...comment });
         result(null, { comment_id: id, ...comment });
+    });
+};
+Comment.validateById = (id, result) => {
+    sql.query(`UPDATE comments SET comment_state = 1 WHERE comment_id = ${id}`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        if (res.affectedRows == 0) {
+            // not found comment with the id
+            result({ kind: "not_found" }, null);
+            return;
+        }
+        console.log("updated comment: ", { comment_id: id });
+        result(null, { comment_id: id, message: "Commentaire Validé" });
     });
 };
 Comment.remove = (postId, id, result) => {

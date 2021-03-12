@@ -11,13 +11,15 @@ fetch("http://localhost:3000/user/data", {
         }
     })
     .catch(err => {
+        location.href = "login.html";
         console.log(err);
     });
 const users = [];
 const posts = [];
 const comments = [];
-const userUrlApi = "http://localhost:3000/users";
-const postUrlApi = "http://localhost:3000/posts";
+const userUrlApi = "http://localhost:3000/users/validation";
+const postUrlApi = "http://localhost:3000/posts/validation";
+const commentUrlApi = "http://localhost:3000/posts/comments/validation";
 function callApi(url) {
     return fetch(url)
         .then(function(response) {
@@ -25,64 +27,41 @@ function callApi(url) {
         })
         .catch(err => console.error(err));
 }
-function pushData(data) {
-    data.forEach(e => {
-        if (e.post_id) {
-            callApi(postUrlApi + "/" + e.post_id + "/comments").then(function(dataComment) {
-                if (dataComment.length > 0) {
-                    pushDataComment(dataComment);
-                }
-            });
-        }
-        if (e.post_state == 0) {
+function pushData(data, typeOfData) {
+    if (typeOfData == "posts") {
+        data.forEach(e => {
             posts.push(e);
-        }
-        if (e.user_state == 0) {
+        });
+    } else if (typeOfData == "users") {
+        data.forEach(e => {
             users.push(e);
-        }
-    });
-    if (posts.length == 0) {
-        document.body.querySelector("#postsToValidate").textContent = "Il n'y a pas d'articles à valider pour le moment";
-    }
-    // if (users.length == 0) {
-    //     document.body.querySelector("#usersToValidate").textContent = "Il n'y a pas d'utilisateurs à valider pour le moment";
-    // }
-}
-function pushDataComment(dataComment) {
-    dataComment.forEach(e => {
-        if (e.comment_state == 0) {
+        });
+    } else {
+        data.forEach(e => {
             comments.push(e);
-        }
-    });
-    if (comments.length == 0) {
-        document.body.querySelector("#commentsToValidate").textContent = "Il n'y a pas de commentaires à valider pour le moment";
+        });
     }
 }
 callApi(postUrlApi).then(function(data) {
     if (data.length > 0) {
-        pushData(data);
+        pushData(data, "posts");
     }
 });
 callApi(userUrlApi).then(function(data) {
     if (data.length > 0) {
+        pushData(data, "users");
+    }
+});
+callApi(commentUrlApi).then(function(data) {
+    if (data.length > 0) {
         pushData(data);
     }
 });
-var postVue = new Vue({
-    el: "#postsToValidate",
+app = new Vue({
+    el: "#root",
     data: {
-        posts: posts
-    }
-});
-var userVue = new Vue({
-    el: "#usersToValidate",
-    data: {
-        validateUsers: users
-    }
-});
-var commentVue = new Vue({
-    el: "#commentsToValidate",
-    data: {
+        posts: posts,
+        users: users,
         comments: comments
     }
 });

@@ -23,37 +23,41 @@
                 </div>
             </nav>
         </header>
-        <h1>Espace admin</h1>
-        <div id="adminSpace">
-            <div id="toValidate">
-                <h2>A valider</h2>
-                <h3>Utilisateurs</h3>
-                <div id="usersToValidate">
-                    <ul>
-                        <li v-for="validateUser in validateUsers">
-                            <a :href="`user.html?id=${validateUser.user_id}`">{{validateUser.user_first_name}} {{validateUser.user_last_name}} </a>
-                        </li>
-                    </ul>
-                </div>
-                <h3>Articles</h3>
-                <div id="postsToValidate">
-                    <ul>
-                        <li v-for="post in posts">
-                            <a :href="`post.html?id=${post.post_id}`">{{post.post_title}}</a>
-                        </li>
-                    </ul>
-                </div>
-                <h3>Commentaire</h3>
-                <div id="commentsToValidate">
-                    <ul>
-                        <li v-for="comment in comments">{{comment.comment_content}} dans <a :href="`post.html?id=${comment.post_id}#comment${comment.comment_id}`">cet article</a></li>
-                    </ul>
+        <div id="root">
+            <h1>Espace admin</h1>
+            <div id="adminSpace">
+                <div id="toValidate">
+                    <h2>A valider</h2>
+                    <h3>Utilisateurs</h3>
+                    <div>
+                        <span v-if="users.length == 0">Il n'y a aucun utilisateur à valider</span>
+                        <ul v-else>
+                            <li v-for="user in users">
+                                <a :href="`user.html?id=${user.user_id}`">{{user.user_first_name}} {{user.user_last_name}} </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Articles</h3>
+                    <div>
+                        <span v-if="posts.length == 0">Il n'y a aucun article à valider</span>
+                        <ul v-else>
+                            <li v-for="post in posts">
+                                <a :href="`post.html?id=${post.post_id}`">{{post.post_title}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <h3>Commentaire</h3>
+                    <div>
+                        <span v-if="comments.length == 0">Il n'y a aucun commentaire à valider</span>
+                        <ul v-else>
+                            <li v-for="comment in comments">{{comment.comment_content}} dans <a :href="`post.html?id=${comment.post_id}#comment${comment.comment_id}`">cet article</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <script src="main.js"></script>
         <script src="admin.js"></script>
-        <script src="logout.js"></script>
-        <script src="userid.js"></script>
     </body>
 </html>

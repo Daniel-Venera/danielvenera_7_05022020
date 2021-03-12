@@ -7,11 +7,13 @@ exports.create = (req, res) => {
             message: "Le contenu ne peut pas être vide!"
         });
     }
+    console.log("fichier :" + req.body.post_file);
     // MULTER
-    // if (req.body.post_file) {
-    //     console.log("oui");
-    //     req.body.post_file = `${req.protocol}://${req.get("host")}/post_files/${req.body.post_file.post_filename}`;
-    // }
+    if (req.body.post_file) {
+        console.log("oui");
+        req.body.post_file = `${req.protocol}://${req.get("host")}/images/${req.post_file.filename}`;
+        console.log(req.body.post_file);
+    }
     if (req.body.post_title.length > 150) {
         return res.status(400).json({ error: "Le titre doit contenir 150 caractères maximum" });
     }
@@ -35,9 +37,19 @@ exports.create = (req, res) => {
         else res.send(data);
     });
 };
-// Retrieve all posts from the database.
+// Retrieve all posts from the database where post_state = 1.
 exports.findAll = (req, res) => {
     Post.getAll((err, data) => {
+        if (err)
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving posts."
+            });
+        else res.send(data);
+    });
+};
+// Retrieve all posts from the database where post_state = 0.
+exports.findAllToValidate = (req, res) => {
+    Post.getAllToValidate((err, data) => {
         if (err)
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving posts."
@@ -84,6 +96,21 @@ exports.update = (req, res) => {
             } else {
                 res.status(500).send({
                     message: "Error updating post with id " + req.params.postId
+                });
+            }
+        } else res.send(data);
+    });
+};
+exports.validate = (req, res) => {
+    Post.validateById(req.params.postId, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                res.status(404).send({
+                    error: `Not found post with id ${req.params.postId}.`
+                });
+            } else {
+                res.status(500).send({
+                    error: "Error updating post with id " + req.params.postId
                 });
             }
         } else res.send(data);

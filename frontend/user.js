@@ -1,140 +1,143 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const userId = urlParams.get("id");
+if (isNaN(userId)) {
+    location.href = "index.html";
+}
+//Api Url
+let userDataUrl = "http://localhost:3000/user/data";
 const urlApi = "http://localhost:3000/users/" + userId;
+const validateUrlApi = "http://localhost:3000/users/" + userId + "/validation";
+const postsUrlApi = "http://localhost:3000/posts/user/" + userId;
+const commentsUrlApi = "http://localhost:3000/users/" + userId + "/comments";
+// Options
+let optionsUserData = { method: "GET", headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } };
+// Api Calls
+function callApiUserId(url, options) {
+    return fetch(url, options)
+        .then(res => res.json())
+        .catch(err => {
+            location.href = "login.html";
+            console.log(err);
+        });
+}
 function callApi(url) {
     return fetch(url)
         .then(function(response) {
-            // if (response.status == 404) {
-            //     location.href = "index.html";
-            // }
+            if (response.status == 404) {
+                location.href = "index.html";
+            }
             return response.json();
         })
         .catch(err => console.error(err));
 }
-function showuser(userData) {
-    if (userData.user_state == 0 && sessionStorage.getItem("userId") != 1) {
-        location.href = "index.html";
-    } else if (userData.user_state == 0) {
-        document.querySelector("#userValidate").style.display = "block";
-        document.querySelector("#userForm").style.display = "block";
-        document.querySelector("#user").style.display = "none";
-        document.querySelector("#userFirstName").value = userData.user_first_name;
-        document.querySelector("#userLastName").value = userData.user_last_name;
-        document.querySelector("#userJob").value = userData.user_job;
-        document.querySelector("#userEmail").value = userData.user_email;
-        document.querySelector("#userValidate").addEventListener("click", function() {
-            document.querySelector("#userValidate").style.display = "none";
-            var user_first_name = document.querySelector("#userFirstName").value;
-            var user_last_name = document.querySelector("#userLastName").value;
-            var user_job = document.querySelector("#userJob").value;
-            var user_email = document.querySelector("#userEmail").value;
-            var user_password = document.querySelector("#userPassword").value;
-            var user_state = 1;
-            let UpdateInfos = { user_first_name, user_last_name, user_job, user_state, user_email, user_password };
-            const options = {
-                method: "put",
-                body: JSON.stringify(UpdateInfos),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            };
-            userApiUpdate(urlApi, options);
-        });
-    }
-    var userVue = new Vue({
-        el: "#user",
-        data: {
-            user: userData
-        }
-    });
-    var userVueTitle = new Vue({
-        el: "#userTitle",
-        data: {
-            userTitle: userData.user_first_name + " " + userData.user_last_name
-        }
-    });
-    if (sessionStorage.getItem("userId") == userId) {
-        document.querySelector("#userForm").style.display = "block";
-        document.querySelector("#user").style.display = "none";
-        document.querySelector("#userFirstName").value = userData.user_first_name;
-        document.querySelector("#userLastName").value = userData.user_last_name;
-        document.querySelector("#userJob").value = userData.user_job;
-        document.querySelector("#userEmail").value = userData.user_email;
-    }
-    if (sessionStorage.getItem("userId") == userId || sessionStorage.getItem("userId") == "1") {
-        document.querySelector("#userDelete").style.display = "block";
-        document.querySelector("#userDelete").addEventListener("click", function() {
-            const deleteOptions = {
-                method: "delete",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            };
-            userApiDelete(urlApi, deleteOptions);
-        });
-    }
-}
-callApi(urlApi).then(function(userData) {
-    showuser(userData);
-});
-//update
-function userApiUpdate(url, options) {
-    fetch(url, options)
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(response) {
-            console.log(response);
-            document.querySelector("#userMessage").textContent = "Merci ! Les informations ont bien été mises à jour";
-        })
-        .catch(err => console.error(err));
-}
-document.querySelector("#userForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    var user_first_name = document.querySelector("#userFirstName").value;
-    var user_last_name = document.querySelector("#userLastName").value;
-    var user_job = document.querySelector("#userJob").value;
-    var user_email = document.querySelector("#userEmail").value;
-    var user_password = document.querySelector("#userPassword").value;
-    var user_state = sessionStorage.getItem("userId") == 25 ? "2" : "1";
-    let UpdateInfos = { user_first_name, user_last_name, user_job, user_state, user_email, user_password };
-    const options = {
-        method: "put",
-        body: JSON.stringify(UpdateInfos),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    };
-    userApiUpdate(urlApi, options);
-});
-//delete
-function userApiDelete(url, options) {
-    fetch(url, options)
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(response) {
-            sessionStorage.clear();
-            document.querySelector("#userMessage").textContent = "Le compte a bien été supprimé";
-        })
-        .catch(err => console.error(err));
-}
-// Retrieve posts
-const postsUrlApi = "http://localhost:3000/posts/user/" + userId;
 let userPosts = [];
-callApi(postsUrlApi).then(function(data) {
-    console.log(data);
-    data.forEach(e => {
-        userPosts.push(e);
+let userComments = [];
+callApiUserId(userDataUrl, optionsUserData).then(function(data) {
+    let currentUserId = data.authorizedData.userId;
+    callApi(urlApi).then(function(userData) {
+        showuser(userData, currentUserId);
     });
-    if (userPosts.length == 0) {
-        document.querySelector("#postsMessage").textContent = `Cet utilisateur n'a pas écrit d'article pour le moment`;
-    }
 });
-var postsVue = new Vue({
-    el: "#posts",
-    data: {
-        posts: userPosts
+let isCurrentUser = false;
+let isUserValidate = true;
+function showuser(userData, currentUserId) {
+    console.log(userData);
+    if (userData.user_state == 0 && currentUserId != 1) {
+        location.href = "index.html";
+    } else if (currentUserId == 1 && userData.user_state == 0) {
+        isUserValidate = false;
     }
-});
+    if (userData.user_id == currentUserId) {
+        isCurrentUser = true;
+    }
+    callApi(postsUrlApi).then(function(data) {
+        data.forEach(e => {
+            userPosts.push(e);
+        });
+    });
+    callApi(commentsUrlApi).then(function(data) {
+        console.log(data);
+        data.forEach(e => {
+            userComments.push(e);
+        });
+    });
+    title = new Vue({
+        el: "#title",
+        data: {
+            title: userData.user_first_name + " " + userData.user_last_name
+        }
+    });
+    app = new Vue({
+        el: "#root",
+        data: {
+            currentUserId: currentUserId,
+            isCurrentUser: isCurrentUser,
+            isUserValidate: isUserValidate,
+            firstName: userData.user_first_name,
+            lastName: userData.user_last_name,
+            job: userData.user_job,
+            email: userData.user_email,
+            userPosts: userPosts,
+            userComments: userComments,
+            password: "",
+            updateMessage: "",
+            userState: userData.user_state,
+            updateInfos: {},
+            options: {}
+        },
+        methods: {
+            update() {
+                this.updateInfos = { user_first_name: this.firstName, user_last_name: this.lastName, user_job: this.job, user_email: this.email, user_password: this.password, user_state: this.userState };
+                this.options = { method: "put", body: JSON.stringify(this.updateInfos), headers: { "Content-Type": "application/json" } };
+                var self = this;
+                fetch(urlApi, this.options)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(response) {
+                        self.updateMessage = response.error ? response.error : "Merci ! Vos données ont été mises à jour";
+                    })
+                    .catch(err => console.error(err));
+            },
+            validateUser() {
+                var self = this;
+                this.options = { method: "put", headers: { "Content-Type": "application/json" } };
+                fetch(validateUrlApi, this.options)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(response) {
+                        self.updateMessage = response.error ? response.error : response.message;
+                        self.isUserValidate = true;
+                    })
+                    .catch(err => console.error(err));
+            },
+            deleteUser() {
+                if (confirm("Êtes-vous sûr ?")) {
+                    this.options = {
+                        method: "delete",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    };
+                    var self = this;
+                    fetch(urlApi, this.options)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(response) {
+                            console.log(response);
+                            if (self.isCurrentUser) {
+                                sessionStorage.clear();
+                                location.href = "login.html";
+                            } else {
+                                location.href = "index.html?deleted_user=true";
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+        }
+    });
+}

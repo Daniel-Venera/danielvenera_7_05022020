@@ -8,10 +8,12 @@ const Post = function(post) {
     this.post_file = post.post_file;
 };
 var dateObj = new Date();
-var month = (dateObj.getUTCMonth() + 1).toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false }); //months from 1-12
-var day = dateObj.getUTCDate();
-var year = dateObj.getUTCFullYear();
-var newdate = year + "-" + month + "-" + day;
+var month = dateObj.getMonth() + 1;
+var day = dateObj.getDate();
+var year = dateObj.getFullYear();
+var hour = dateObj.getHours().toLocaleString("fr-FR") + 1;
+var minute = dateObj.getMinutes();
+var newdate = year + "-" + month + "-" + day + " " + hour + ":" + minute;
 Post.create = (newPost, result) => {
     sql.query("INSERT INTO posts SET ?", newPost, (err, res) => {
         if (err) {
@@ -24,7 +26,7 @@ Post.create = (newPost, result) => {
     });
 };
 Post.findById = (postId, result) => {
-    sql.query(`SELECT * FROM posts WHERE post_id = ${postId}`, (err, res) => {
+    sql.query(`SELECT * FROM posts  INNER JOIN users ON posts.user_id = users.user_id  WHERE post_id = ${postId}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -40,7 +42,18 @@ Post.findById = (postId, result) => {
     });
 };
 Post.getAll = result => {
-    sql.query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id ORDER BY post_date_creation DESC;", (err, res) => {
+    sql.query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE post_state = 1 ORDER BY post_date_creation DESC;", (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log("posts: ", res);
+        result(null, res);
+    });
+};
+Post.getAllToValidate = result => {
+    sql.query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE post_state = 0 ORDER BY post_date_creation DESC;", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -51,7 +64,7 @@ Post.getAll = result => {
     });
 };
 Post.updateById = (id, post, result) => {
-    sql.query(`UPDATE posts SET user_id = ${post.user_id}, post_title = '${post.post_title}', post_content = '${post.post_content}', post_date_update = '${newdate}', post_state = ${post.post_state} WHERE post_id = ${id}`, (err, res) => {
+    sql.query(`UPDATE posts SET  post_title = "${post.post_title}", post_content = "${post.post_content}", post_date_update = "${newdate}", post_state = ${post.post_state} WHERE post_id = ${id}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -62,8 +75,56 @@ Post.updateById = (id, post, result) => {
             result({ kind: "not_found" }, null);
             return;
         }
-        console.log("updated post: ", { post_id: id, ...post });
-        result(null, { post_id: id, ...post });
+        sql.query(`SELECT * FROM comments WHERE post_id = ${id}`, (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(null, err);
+                return;
+            } else {
+                sql.query(`UPDATE comments SET comment_state = 3 WHERE post_id = ${id} AND comment_state = 1`, (err, res) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        result(null, err);
+                        return;
+                    }
+                    console.log("updated post: ", { post_id: id, ...post });
+                    result(null, { post_id: id, ...post });
+                });
+            }
+        });
+    });
+};
+Post.validateById = (id, result) => {
+    sql.query(`UPDATE posts SET post_state = 1 WHERE post_id = ${id}`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        if (res.affectedRows == 0) {
+            // not found post with the id
+            result({ kind: "not_found" }, null);
+            return;
+        }
+        sql.query(`SELECT * FROM comments WHERE post_id = ${id}`, (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                result(null, err);
+                return;
+            } else {
+                sql.query(`UPDATE comments SET comment_state = 1 WHERE post_id = ${id} AND comment_state = 3`, (err, res) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        result(null, err);
+                        return;
+                    }
+                    // console.log("updated post: ", { post_id: id, ...post });
+                    // result(null, { post_id: id, ...post });
+                });
+            }
+        });
+        console.log("updated post: ", { post_id: id });
+        result(null, { message: "Article validé !" });
     });
 };
 Post.remove = (id, result) => {
@@ -94,7 +155,7 @@ Post.removeAll = result => {
     });
 };
 Post.findPostByUserId = (userId, result) => {
-    sql.query(`SELECT * FROM posts WHERE user_id = ${userId}`, (err, res) => {
+    sql.query(`SELECT * FROM posts WHERE user_id = ${userId} AND post_state = 1`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);

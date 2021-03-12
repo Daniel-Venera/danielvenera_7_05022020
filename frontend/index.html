@@ -24,14 +24,14 @@
                     </div>
                 </nav>
             </header>
-            <div id="state"></div>
-            <div id="generalMessage"></div>
-            <div id="posts">
+            <div id="root">
+                {{state}}
+                <div v-if="message"><span>{{message}}</span></div>
                 <ol>
                     <li v-for="todo in todos">
                         Auteur :
                         <a :href="`user.html?id=${todo.user_id}`">{{todo.user_first_name}} </a> <br />
-                        <span>State du user : {{todo.user_id}}</span> <br /><br />
+                        <span>ID du user : {{todo.user_id}}</span> <br /><br />
                         <span>ID de l'article : {{todo.post_id}}</span> <br />
                         <span>Date de création : {{todo.post_date_creation}}</span> <br />
                         <span>Titre de l'article : {{todo.post_title}}</span> <br />
@@ -46,7 +46,6 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="index.js"></script>
-        <script src="logout.js"></script>
-        <script src="userid.js"></script>
+        <script src="main.js"></script>
     </body>
 </html>

@@ -9,13 +9,13 @@
     </head>
     <body>
         <div id="root">
-            <span id="signUpMessage"></span>
-            <form id="signUpForm">
-                <input type="text" name="user_first_name" id="userFirstName" placeholder="Prénom" v-model="firstName" />
-                <input type="text" name="user_last_name" id="userLastName" placeholder="Nom" v-model="lastName" />
-                <input type="text" name="user_job" id="userJob" placeholder="Poste" v-model="job" />
-                <input type="email" name="user_email" id="userEmail" placeholder="Email" v-model="email" />
-                <input type="password" name="user_password" id="userPassword" placeholder="Mot de passe" v-model="password" />
+            <span v-if="signUpMessage">{{signUpMessage}}</span>
+            <form @submit.prevent="signUp">
+                <input type="text" placeholder="Prénom" v-model="firstName" />
+                <input type="text" placeholder="Nom" v-model="lastName" />
+                <input type="text" placeholder="Poste" v-model="job" />
+                <input type="email" placeholder="Email" v-model="email" />
+                <input type="password" placeholder="Mot de passe" v-model="password" />
                 <button type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">S'inscrire</button>
             </form>
         </div>
