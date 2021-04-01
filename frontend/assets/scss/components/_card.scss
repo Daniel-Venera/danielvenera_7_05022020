@@ -1,0 +1,73 @@
+.cards {
+    display: grid;
+    grid-gap: 30px;
+    @include tablet-up {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.card {
+    position: relative;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: $trs;
+    &:hover {
+        .card__illu {
+            transform: scale(1.05);
+        }
+    }
+    &__link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 2;
+        height: 100%;
+        width: 100%;
+    }
+    &__illuCnt {
+        height: 200px;
+        border-radius: 8px 8px 0 0;
+        border: 1px solid $grey;
+        overflow: hidden;
+    }
+    &__illu {
+        height: 100%;
+        transition: $trsl;
+        background-size: cover !important;
+    }
+    &__body {
+        color: $black;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: calc(100% - 200px);
+        border-radius: 0 0 8px 8px;
+        border: 1px solid $grey;
+        border-top: none;
+    }
+    &__title,
+    &__content {
+        margin-bottom: 24px;
+    }
+    &__author {
+        position: relative;
+        z-index: 3;
+        display: inline-block;
+        margin-bottom: 16px;
+    }
+    &__infos {
+        display: flex;
+        justify-content: flex-end;
+    }
+    &__comment {
+        color: $grey;
+    }
+    &__like {
+        color: $red;
+    }
+    &__number {
+        padding: 0px 8px;
+    }
+}

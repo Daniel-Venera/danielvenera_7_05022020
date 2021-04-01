@@ -7,13 +7,13 @@ const Post = function(post) {
     this.post_state = post.post_state;
     this.post_file = post.post_file;
 };
-var dateObj = new Date();
-var month = dateObj.getMonth() + 1;
-var day = dateObj.getDate();
-var year = dateObj.getFullYear();
-var hour = dateObj.getHours().toLocaleString("fr-FR") + 1;
-var minute = dateObj.getMinutes();
-var newdate = year + "-" + month + "-" + day + " " + hour + ":" + minute;
+// var dateObj = new Date();
+// var month = dateObj.getMonth() + 1;
+// var day = dateObj.getDate();
+// var year = dateObj.getFullYear();
+// var hour = dateObj.getHours().toLocaleString("fr-FR") + 1;
+// var minute = dateObj.getMinutes();
+// var newdate = year + "-" + month + "-" + day + " " + hour + ":" + minute;
 Post.create = (newPost, result) => {
     sql.query("INSERT INTO posts SET ?", newPost, (err, res) => {
         if (err) {
@@ -64,7 +64,7 @@ Post.getAllToValidate = result => {
     });
 };
 Post.updateById = (id, post, result) => {
-    sql.query(`UPDATE posts SET  post_title = "${post.post_title}", post_content = "${post.post_content}", post_date_update = "${newdate}", post_state = ${post.post_state} WHERE post_id = ${id}`, (err, res) => {
+    sql.query(`UPDATE posts SET  post_title = "${post.post_title}", post_content = "${post.post_content}", post_state = ${post.post_state} WHERE post_id = ${id}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
@@ -86,9 +86,17 @@ Post.updateById = (id, post, result) => {
                         console.log("error: ", err);
                         result(null, err);
                         return;
+                    } else {
+                        sql.query(`UPDATE likes SET like_state = 3 WHERE post_id = ${id} AND like_state = 1`, (err, res) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(null, err);
+                                return;
+                            }
+                            console.log("updated post: ", { post_id: id, ...post });
+                            result(null, { post_id: id, ...post });
+                        });
                     }
-                    console.log("updated post: ", { post_id: id, ...post });
-                    result(null, { post_id: id, ...post });
                 });
             }
         });

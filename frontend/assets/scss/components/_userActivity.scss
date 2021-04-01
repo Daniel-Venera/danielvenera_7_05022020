@@ -1,0 +1,11 @@
+.userActivity {
+    &__activity {
+        padding: 0px 15px;
+    }
+    @include tablet-up {
+        display: flex;
+        &__activity {
+            flex: 0 0 calc(100% / 3);
+        }
+    }
+}

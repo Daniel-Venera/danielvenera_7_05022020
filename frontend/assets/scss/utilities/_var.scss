@@ -1,0 +1,51 @@
+//************************* GLOBAL *************************//
+$trs: all 0.2s ease-in-out;
+$trsl: all 0.7s ease-in-out;
+// $bxs: 0 0 10px 0 rgba(100, 100, 100, 0.1);
+//************************* FONTS *************************//
+$font: "Rubik", sans-serif;
+// $lato: "Lato", sans-serif;
+// $ubuntu: "Ubuntu", sans-serif;
+//************************* COLORS *************************//
+// $lightBlue: #b0e8f7;
+$black: #000203;
+$lightGrey: rgba(239, 239, 239, 0.5);
+$grey: rgba(16, 16, 16, 0.3);
+$green: #13a05f;
+$red: #f93104;
+$lightRed: #fdd7d7;
+$primary: #24314a;
+$hover: #004182;
+$white: #fafcfe;
+//************************* BREAKPOINTS *************************//
+$tablet-up: 768px;
+$tablet-down: 767px;
+$large: 992px;
+$desktop-up: 1200px;
+$desktop-down: 1199px;
+//************************* MEDIA QUERIES *************************//
+@mixin tablet-up {
+    @media (min-width: $tablet-up) {
+        @content;
+    }
+}
+@mixin tablet-down {
+    @media (max-width: $tablet-down) {
+        @content;
+    }
+}
+@mixin large {
+    @media (min-width: $large) {
+        @content;
+    }
+}
+@mixin desktop-up {
+    @media (min-width: $desktop-up) {
+        @content;
+    }
+}
+@mixin desktop-down {
+    @media (max-width: $desktop-down) {
+        @content;
+    }
+}

@@ -1,0 +1,16 @@
+.container {
+    padding: 0 30px;
+    margin: 0 auto;
+    @media (min-width: 576px) {
+        width: 540px;
+    }
+    @include tablet-up {
+        width: 720px;
+    }
+    @include large {
+        width: 960px;
+    }
+    @include desktop-up {
+        width: 1140px;
+    }
+}

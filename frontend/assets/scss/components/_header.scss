@@ -1,0 +1,43 @@
+#header {
+    background-color: white;
+    padding: 15px 0;
+    .container {
+        padding: 0px 15px;
+    }
+    .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        &__img {
+            width: 50px;
+            @include tablet-up {
+                display: none;
+            }
+            &--desktop {
+                display: none;
+                width: 200px;
+                @include tablet-up {
+                    display: block;
+                }
+            }
+        }
+        &__items {
+            display: flex;
+            align-items: center;
+        }
+        &__item {
+            cursor: pointer;
+            padding: 8px;
+            font-size: 32px;
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+        &__link {
+            padding: 8px;
+        }
+    }
+    a {
+        color: $red;
+    }
+}

@@ -6,39 +6,56 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Créer un article</title>
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
     </head>
     <body>
-        <header>
-            <nav>
-                <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
-                <div>
-                    <a href="createpost.html">Créer un article</a>
+        <div id="header">
+            <header>
+                <div class="container">
+                    <nav class="nav">
+                        <div>
+                            <a href="index.html">
+                                <img src="assets/img/logos/icon.png" class="nav__img" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                            </a>
+                        </div>
+                        <ul class="nav__items">
+                            <li class="nav__item">
+                                <a class="nav__link" href="createpost.html"><i class="fas fa-pen"></i></a>
+                            </li>
+                            <li class="nav__item" id="userId">
+                                <a class="nav__link" :href="`user.html?id=${userId}`"><i class="fas fa-user"></i></a>
+                            </li>
+                            <li class="nav__item" id="admin" v-if="admin">
+                                <a class="nav__link" href="admin.html" id="admin"><i class="fas fa-user-cog"></i></a>
+                            </li>
+                            <li class="nav__item">
+                                <a class="nav__link" id="logOut" @click="logOut"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div id="userId">
-                    <a :href="`user.html?id=${userId}`">Mon compte</a>
-                </div>
-                <button id="logOut">Déconnexion</button>
-                <div id="admin" v-if="admin">
-                    <a href="admin.html" id="admin">Espace Admin</a>
-                </div>
-            </nav>
-        </header>
-        <div id="root">
-            <form @submit.prevent="createPost">
-                <div>
-                    <label for="post_title">Titre</label>
-                    <input type="text" v-model="post_title" placeholder="Titre" />
-                </div>
-                <div>
-                    <label for="post_content">Contenu</label>
-                    <textarea v-model="post_content" cols="30" rows="10" placeholder="Contenu"></textarea>
-                </div>
-                <input type="file" v-model="post_file" accept="image/*" />
-                <button type="submit">Créer un article</button>
-            </form>
+            </header>
         </div>
+        <div id="root">
+            <main class="main">
+                <div class="section section--createPost">
+                    <div class="container">
+                        <h1 class="section__title">Créer un article</h1>
+                        <form class="form" @submit.prevent="onSubmit" enctype="multipart/form-data">
+                            <input type="text" v-model="post_title" placeholder="Titre" />
+                            <textarea v-model="post_content" cols="30" rows="10" placeholder="Contenu"></textarea>
+                            <label for="file">Image de couverture</label>
+                            <input id="file" type="file" ref="file" accept="image/png,image/jpg,image/jpeg" @change="onSelect" />
+                            <button type="submit" class="btn ">Publier</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="createpost.js"></script>
-        <script src="main.js"></script>
+        <script type="module" src="assets/js/createpost.js"></script>
+        <script src="assets/js/main.js"></script>
     </body>
 </html>

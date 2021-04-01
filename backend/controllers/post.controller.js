@@ -7,13 +7,7 @@ exports.create = (req, res) => {
             message: "Le contenu ne peut pas être vide!"
         });
     }
-    console.log("fichier :" + req.body.post_file);
-    // MULTER
-    if (req.body.post_file) {
-        console.log("oui");
-        req.body.post_file = `${req.protocol}://${req.get("host")}/images/${req.post_file.filename}`;
-        console.log(req.body.post_file);
-    }
+    console.log(req);
     if (req.body.post_title.length > 150) {
         return res.status(400).json({ error: "Le titre doit contenir 150 caractères maximum" });
     }

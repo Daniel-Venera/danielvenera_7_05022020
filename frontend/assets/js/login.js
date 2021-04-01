@@ -6,7 +6,8 @@ app = new Vue({
         loginMessage: "",
         loginInfos: {},
         options: {},
-        urlApi: "http://localhost:3000/login"
+        urlApi: "http://localhost:3000/login",
+        error: false
     },
     methods: {
         login: function() {
@@ -24,6 +25,7 @@ app = new Vue({
                 .then(function(response) {
                     if (response.error) {
                         self.loginMessage = response.error;
+                        self.error = true;
                     } else {
                         sessionStorage.setItem("token", response.token);
                         sessionStorage.setItem("userId", response.userId);

@@ -5,95 +5,110 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
         <title id="title">{{title}}</title>
     </head>
     <body>
-        <header>
-            <nav>
-                <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
-                <div>
-                    <a href="createpost.html">Créer un article</a>
+        <div id="header">
+            <header>
+                <div class="container">
+                    <nav class="nav">
+                        <div>
+                            <a href="index.html">
+                                <img src="assets/img/logos/icon.png" class="nav__img" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                            </a>
+                        </div>
+                        <ul class="nav__items">
+                            <li class="nav__item">
+                                <a class="nav__link" href="createpost.html"><i class="fas fa-pen"></i></a>
+                            </li>
+                            <li class="nav__item" id="userId">
+                                <a class="nav__link" :href="`user.html?id=${userId}`"><i class="fas fa-user"></i></a>
+                            </li>
+                            <li class="nav__item" id="admin" v-if="admin">
+                                <a class="nav__link" href="admin.html" id="admin"><i class="fas fa-user-cog"></i></a>
+                            </li>
+                            <li class="nav__item">
+                                <a class="nav__link" id="logOut" @click="logOut"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div id="userId">
-                    <a :href="`user.html?id=${userId}`">Mon compte</a>
-                </div>
-                <button id="logOut">Déconnexion</button>
-                <div id="admin" v-if="admin">
-                    <a href="admin.html" id="admin">Espace Admin</a>
-                </div>
-            </nav>
-        </header>
-        <main id="root">
+            </header>
+        </div>
+        <div id="root">
             <span v-if="updateMessage">{{updateMessage}}</span>
-            <div v-if="isAuthor">
-                <form @submit.prevent="updatePost">
-                    <input type="text" v-model="post.post_title" />
-                    <textarea v-model="post.post_content" cols="30" rows="10">{{post.post_content}}</textarea>
-                    <button type="submit">Modifier mon article</button>
-                </form>
-                <p>
-                    le : {{post.post_date_creation}}
-                </p>
-                <p v-if="post.post_date_update">
-                    Modifié le : {{post.post_date_update}}
-                </p>
-            </div>
-            <div v-else>
-                <h1>
-                    {{post.post_title}}
-                </h1>
-                <p>
-                    {{post.post_content}}
-                </p>
-                <p>
-                    écrit par : {{post.user_first_name}} {{post.user_last_name}}
-                </p>
-                <p>
-                    le : {{post.post_date_creation}}
-                </p>
-                <p v-if="post.post_date_update">
-                    Modifié le : {{post.post_date_update}}
-                </p>
-                <p>ID : {{post.user_id}}</p>
-            </div>
-            <button v-if="!isPostValidate && currentUserId == 1" @click="validatePost">Valider l'article</button>
-            <button v-if="isAuthor || currentUserId == 1" @click="deletePost">Supprimer l'article</button>
-            <form v-if="isPostValidate" @submit.prevent="commentPost">
-                <textarea v-model="comment" cols="30" rows="10"></textarea>
-                <button type="submit">Commenter</button>
-            </form>
-            <section>
-                <h2>
-                    Commentaires
-                </h2>
-                <div v-if="comments.length > 0">
-                    <ul>
-                        <li v-for="comment in comments" v-bind:id=" `comment${comment.comment_id}` ">
-                            <div v-if="comment.user_id == currentUserId && comment.comment_state == 1 && comment.comment_id ">
-                                <form @submit.prevent="updateComment(comment)">
-                                    <textarea v-model="comment.comment_content" cols="30" rows="10">{{comment.comment_content}}</textarea>
-                                    <button type="submit">Modifier le commentaire</button>
-                                </form>
-                            </div>
-                            <div v-else>
-                                Auteur : <a :href="`user.html?id=${comment.user_id}`">{{comment.user_first_name}} {{comment.user_last_name}} </a> <br />
-                                Date : {{comment.comment_date_creation}} <br />
-                                <div v-if="comment.comment_date_update">
-                                    <span v-if="comment.comment_date_update"> Modifié le : {{comment.comment_date_update}}</span>
+            <main class="main">
+                <div class="container">
+                    <div class="section section--article">
+                        <div v-if="isAuthor && updateArticleState">
+                            <form class="form form--updatePost" @submit.prevent="updatePost" enctype="multipart/form-data">
+                                <div>
+                                    <span @click="normalState()" class="form__back"><i class="fas fa-arrow-left"></i> Retour à l'article </span>
                                 </div>
-                                Contenu : {{comment.comment_content}} <br /><br />
-                            </div>
-                            <button v-if="comment.user_id == currentUserId || currentUserId == 1" @click="deleteComment(comment)">Supprimer le commentaire</button>
-                            <button v-if="comment.comment_state == 0" v-on:click="validateComment(comment)">Valider le commentaire</button>
-                            <br /><br />
-                        </li>
-                    </ul>
+                                <input type="text" v-model="post.post_title" />
+                                <textarea v-model="post.post_content" cols="30" rows="30">{{post.post_content}}</textarea>
+                                <button type="submit" class="btn">Modifier mon article</button>
+                            </form>
+                        </div>
+                        <div v-else>
+                            <div v-if="post.post_file" v-bind:style="{background: 'url(' + post.post_file + ')center center no-repeat'}" class="section__illu"></div>
+                            <button v-if="isAuthor" class="btn" @click="updateState()">Modifier</button>
+                            <button v-if="isAuthor || currentUserId == 1" @click="deletePost" class="btn btn--red">Supprimer</button>
+                            <h1 class="section__title">{{post.post_title}}</h1>
+                            <div class="section__content">{{post.post_content}}</div>
+                            <p class="section__articleInfos">
+                                <em>
+                                    Écrit par {{post.user_first_name}} {{post.user_last_name}} le {{post.post_date_creation}}
+                                </em>
+                            </p>
+                        </div>
+                        <p v-if="post.post_date_update" class="section__articleInfos">
+                            Modifié le : {{post.post_date_update}}
+                        </p>
+                        <button v-if="!isPostValidate && currentUserId == 1" @click="validatePost" class="btn btn--green">Valider l'article</button>
+                        <div class="likes">
+                            <span>{{likes.length}} <i v-if="hasLiked == true" class=" fas fa-heart likes__heart" @click="likeDelete"></i><i v-else class="far fa-heart likes__heart" @click="likePost"></i></span>
+                        </div>
+                        <form v-if="isPostValidate" @submit.prevent="commentPost">
+                            <textarea v-model="comment" cols="30" rows="10"></textarea>
+                            <button type="submit">Commenter</button>
+                        </form>
+                    </div>
+                    <section class="section section--article">
+                        <h2>
+                            Commentaires
+                        </h2>
+                        <div v-if="comments.length > 0">
+                            <ul>
+                                <li v-for="comment in comments" v-bind:id=" `comment${comment.comment_id}` ">
+                                    <div v-if="comment.user_id == currentUserId && comment.comment_state == 1 && comment.comment_id ">
+                                        <form @submit.prevent="updateComment(comment)">
+                                            <textarea v-model="comment.comment_content" cols="30" rows="10">{{comment.comment_content}}</textarea>
+                                            <button type="submit">Modifier le commentaire</button>
+                                        </form>
+                                    </div>
+                                    <div v-else>
+                                        Auteur : <a :href="`user.html?id=${comment.user_id}`">{{comment.user_first_name}} {{comment.user_last_name}} </a> <br />
+                                        Date : {{comment.comment_date_creation}} <br />
+                                        <div v-if="comment.comment_date_update">
+                                            <span v-if="comment.comment_date_update"> Modifié le : {{comment.comment_date_update}}</span>
+                                        </div>
+                                        Contenu : {{comment.comment_content}} <br /><br />
+                                    </div>
+                                    <button v-if="comment.comment_state == 0" v-on:click="validateComment(comment)">Valider le commentaire</button>
+                                    <br /><br />
+                                </li>
+                            </ul>
+                        </div>
+                        <span v-else>Il n'y a pas de commentaires pour le moment</span>
+                    </section>
                 </div>
-                <span v-else>Il n'y a pas de commentaires pour le moment</span>
-            </section>
-        </main>
+            </main>
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="post.js"></script>
-        <script src="main.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/post.js"></script>
     </body>
 </html>

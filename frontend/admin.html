@@ -6,58 +6,230 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Espace Admin</title>
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
     </head>
     <body>
-        <header>
-            <nav>
-                <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
-                <div>
-                    <a href="createpost.html">Créer un article</a>
+        <div id="header">
+            <header>
+                <div class="container">
+                    <nav class="nav">
+                        <div>
+                            <a href="index.html">
+                                <img src="assets/img/logos/icon.png" class="nav__img" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                            </a>
+                        </div>
+                        <ul class="nav__items">
+                            <li class="nav__item">
+                                <a class="nav__link" href="createpost.html"><i class="fas fa-pen"></i></a>
+                            </li>
+                            <li class="nav__item" id="userId">
+                                <a class="nav__link" :href="`user.html?id=${userId}`"><i class="fas fa-user"></i></a>
+                            </li>
+                            <li class="nav__item" id="admin" v-if="admin">
+                                <a class="nav__link" href="admin.html" id="admin"><i class="fas fa-user-cog"></i></a>
+                            </li>
+                            <li class="nav__item">
+                                <a class="nav__link" id="logOut" @click="logOut"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div id="userId">
-                    <a :href="`user.html?id=${userId}`">Mon compte</a>
-                </div>
-                <button id="logOut">Déconnexion</button>
-                <div id="admin" v-if="admin">
-                    <a href="admin.html" id="admin">Espace Admin</a>
-                </div>
-            </nav>
-        </header>
+            </header>
+        </div>
         <div id="root">
-            <h1>Espace admin</h1>
-            <div id="adminSpace">
-                <div id="toValidate">
-                    <h2>A valider</h2>
-                    <h3>Utilisateurs</h3>
-                    <div>
-                        <span v-if="users.length == 0">Il n'y a aucun utilisateur à valider</span>
-                        <ul v-else>
-                            <li v-for="user in users">
-                                <a :href="`user.html?id=${user.user_id}`">{{user.user_first_name}} {{user.user_last_name}} </a>
-                            </li>
-                        </ul>
+            <main class="main">
+                <section class="section">
+                    <div class="container">
+                        <h1 class="section__title">Espace admin</h1>
+                        <div class="filter">
+                            <span @click="filter('validation')" class="filter__btnCnt"><button class="filter__btn   btn" v-bind:class="{ 'filter__btn--active': section == 'validation' }">A valider</button></span>
+                            <span @click="filter('users')" class="filter__btnCnt"><button @click="filter('users')" class="filter__btn  btn" v-bind:class="{ 'filter__btn--active': section == 'users' }">Utilisateurs</button></span>
+                            <span @click="filter('posts')" class="filter__btnCnt"><button class="filter__btn  btn" v-bind:class="{ 'filter__btn--active': section == 'posts' }">Articles</button></span>
+                            <span @click="filter('comments')" class="filter__btnCnt"><button class="filter__btn btn" v-bind:class="{ 'filter__btn--active': section == 'comments' }">Commentaires</button></span>
+                            <span @click="filter('likes')" class="filter__btnCnt"><button class="filter__btn btn" v-bind:class="{ 'filter__btn--active': section == 'likes' }">Likes</button></span>
+                        </div>
+                        <div id="validation" v-if="section == 'validation'">
+                            <div class="filter">
+                                <span @click="showValidation('usersToValidate')" class="filter__btnCnt"><button class="filter__btn filter__btn--validation btn" v-bind:class="{ 'filter__btn--active': toValidate == 'usersToValidate' }">Utilisateurs</button></span>
+                                <span @click="showValidation('postsToValidate')" class="filter__btnCnt"><button class="filter__btn filter__btn--validation   btn" v-bind:class="{ 'filter__btn--active': toValidate == 'postsToValidate' }">Articles</button></span>
+                                <span @click="showValidation('commentsToValidate')" class="filter__btnCnt"><button class="filter__btn filter__btn--validation btn" v-bind:class="{ 'filter__btn--active': toValidate == 'commentsToValidate' }">Commentaires</button></span>
+                            </div>
+                            <div v-if="toValidate == 'usersToValidate'">
+                                <table v-if="usersToValidate.length > 0" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Prénom</th>
+                                            <th>Nom</th>
+                                            <th>E-mail</th>
+                                            <th>Poste</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="user in usersToValidate">
+                                            <td>{{user.user_id}}</td>
+                                            <td>{{user.user_first_name}}</td>
+                                            <td>{{user.user_last_name}}</td>
+                                            <td>{{user.user_email}}</td>
+                                            <td>{{user.user_job}}</td>
+                                            <td class="table__link"><a :href="`user.html?id=${user.user_id}`" class="btn">Voir</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <span v-else>Il n'y a aucun utilisateur à valider</span>
+                            </div>
+                            <div v-if="toValidate == 'postsToValidate'">
+                                <table v-if="postsToValidate.length > 0" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Titre</th>
+                                            <th>Auteur</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="post in postsToValidate">
+                                            <td>{{post.post_id}}</td>
+                                            <td>{{post.post_title}}</td>
+                                            <td>{{post.user_first_name}} {{post.user_last_name}}</td>
+                                            <td class="table__link"><a :href="`post.html?id=${post.post_id}`" class="btn">Voir</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <span v-else>Il n'y a aucun utilisateur à valider</span>
+                            </div>
+                            <div v-if="toValidate == 'commentsToValidate'">
+                                <table v-if="commentsToValidate.length > 0" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>ID Article</th>
+                                            <th>Contenu</th>
+                                            <th>Auteur</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="comment in commentsToValidate">
+                                            <td>{{comment.comment_id}}</td>
+                                            <td>{{comment.post_id}}</td>
+                                            <td>{{comment.comment_content}}</td>
+                                            <td>{{comment.user_first_name}} {{comment.user_last_name}}</td>
+                                            <td class="table__link"><a :href="`post.html?id=${comment.post_id}`" class="btn">Voir</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <span v-else>Il n'y a aucun utilisateur à valider</span>
+                            </div>
+                        </div>
+                        <div v-if="section == 'users'">
+                            <table class="table" v-if="users.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Prénom</th>
+                                        <th>Nom</th>
+                                        <th>E-mail</th>
+                                        <th>Poste</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="user in users">
+                                        <td>{{user.user_id}}</td>
+                                        <td>{{user.user_first_name}}</td>
+                                        <td>{{user.user_last_name}}</td>
+                                        <td>{{user.user_email}}</td>
+                                        <td>{{user.user_job}}</td>
+                                        <td class="table__link">
+                                            <a :href="`user.html?id=${user.user_id}`" class="btn">Voir</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-else>
+                                <span>Aucun utilisateur</span>
+                            </div>
+                        </div>
+                        <table class="table table--posts" v-if="section == 'posts'">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date de création</th>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="post in posts">
+                                    <td>{{post.post_id}}</td>
+                                    <td>{{post.post_date_creation}}</td>
+                                    <td>{{post.post_title}}</td>
+                                    <td>{{post.user_first_name}} {{post.user_last_name}}</td>
+                                    <td class="table__link"><a :href="`post.html?id=${post.post_id}`" class="btn btn">Voir</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-if="section == 'comments'">
+                            <table class="table" v-if="comments.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Contenu</th>
+                                        <th>Auteur</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="comment in comments">
+                                        <td>{{comment.comment_id}}</td>
+                                        <td>{{comment.comment_content}}</td>
+                                        <td>{{comment.user_first_name}} {{comment.user_last_name}}</td>
+                                        <td class="table__link">
+                                            <a :href="`post.html?id=${comment.post_id}`" class="btn">Voir</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-else>
+                                <span>Aucun commentaire</span>
+                            </div>
+                        </div>
+                        <div v-if="section == 'likes'">
+                            <table class="table" v-if="likes.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>ID Article</th>
+                                        <th>Auteur</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="like in likes">
+                                        <td>{{like.like_id}}</td>
+                                        <td>{{like.post_id}}</td>
+                                        <td>{{like.user_first_name}} {{like.user_last_name}}</td>
+                                        <td class="table__link">
+                                            <a :href="`post.html?id=${like.post_id}`" class="btn">Voir</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-else>
+                                <span>Aucun like</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3>Articles</h3>
-                    <div>
-                        <span v-if="posts.length == 0">Il n'y a aucun article à valider</span>
-                        <ul v-else>
-                            <li v-for="post in posts">
-                                <a :href="`post.html?id=${post.post_id}`">{{post.post_title}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <h3>Commentaire</h3>
-                    <div>
-                        <span v-if="comments.length == 0">Il n'y a aucun commentaire à valider</span>
-                        <ul v-else>
-                            <li v-for="comment in comments">{{comment.comment_content}} dans <a :href="`post.html?id=${comment.post_id}#comment${comment.comment_id}`">cet article</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+                </section>
+            </main>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="main.js"></script>
-        <script src="admin.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/admin.js"></script>
     </body>
 </html>

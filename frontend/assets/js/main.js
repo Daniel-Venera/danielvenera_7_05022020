@@ -13,18 +13,15 @@
 //         console.log(err);
 //     });
 var userVue = new Vue({
-    el: "#userId",
+    el: "#header",
     data: {
-        userId: sessionStorage.getItem("userId")
-    }
-});
-var userVue = new Vue({
-    el: "#admin",
-    data: {
+        userId: sessionStorage.getItem("userId"),
         admin: sessionStorage.getItem("userId") == "1"
+    },
+    methods: {
+        logOut() {
+            sessionStorage.clear();
+            location.href = "login.html";
+        }
     }
-});
-document.querySelector("#logOut").addEventListener("click", function() {
-    sessionStorage.clear();
-    location.href = "login.html";
 });

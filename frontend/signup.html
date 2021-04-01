@@ -5,24 +5,34 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
         <title>Sign up</title>
     </head>
     <body>
         <div id="root">
-            <span v-if="signUpMessage">{{signUpMessage}}</span>
-            <form @submit.prevent="signUp">
-                <input type="text" placeholder="Prénom" v-model="firstName" />
-                <input type="text" placeholder="Nom" v-model="lastName" />
-                <input type="text" placeholder="Poste" v-model="job" />
-                <input type="email" placeholder="Email" v-model="email" />
-                <input type="password" placeholder="Mot de passe" v-model="password" />
-                <button type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">S'inscrire</button>
-            </form>
-        </div>
-        <div>
-            <p>Déjà un compte ? <a href="login.html">Connectez-vous !</a></p>
+            <section class="section section--log">
+                <div class="container">
+                    <h1 class="section__title">
+                        S'inscrire
+                    </h1>
+                    <div class="form">
+                        <span class="form__message" :class="signedUp ? '' : 'form__message--error'" v-if="signUpMessage">{{signUpMessage}}</span>
+                        <form @submit.prevent="signUp">
+                            <input type="text" placeholder="Prénom" v-model="firstName" />
+                            <input type="text" placeholder="Nom" v-model="lastName" />
+                            <input type="text" placeholder="Poste" v-model="job" />
+                            <input type="email" placeholder="Email" v-model="email" />
+                            <input type="password" placeholder="Mot de passe" v-model="password" />
+                            <button class="form__btn btn" :class="[ firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ? 'btn--disabled' : '' ]" type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">S'inscrire</button>
+                        </form>
+                    </div>
+                    <p class="section__content">Déjà un compte ? <a href="login.html">Connectez-vous !</a></p>
+                </div>
+            </section>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="signup.js"></script>
+        <script src="assets/js/signup.js"></script>
     </body>
 </html>

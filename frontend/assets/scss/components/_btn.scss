@@ -1,0 +1,50 @@
+.btn {
+    margin-bottom: 16px;
+    border: none;
+    padding: 10px 20px;
+    background-color: $primary;
+    border: 2px solid $primary;
+    color: $white;
+    font-family: $font;
+    outline: none;
+    cursor: pointer;
+    transition: $trs;
+    &:hover {
+        background-color: $white;
+        color: $primary;
+    }
+    &--disabled {
+        cursor: not-allowed;
+        color: $grey;
+        background-color: $lightGrey;
+        &:hover {
+            background-color: $lightGrey;
+            color: $grey;
+        }
+    }
+    &--grey {
+        color: $white;
+        background-color: $grey;
+        border: 2px solid $grey;
+        &:hover {
+            background-color: $white;
+            color: $grey;
+        }
+    }
+    &--red {
+        border: 2px solid $red;
+        background-color: $red;
+        &:hover {
+            background-color: $white;
+            color: $red;
+        }
+    }
+    &--green {
+        border: 2px solid $green;
+        background-color: $green;
+        &:hover {
+            background-color: $white;
+            color: $green;
+        }
+    }
+}

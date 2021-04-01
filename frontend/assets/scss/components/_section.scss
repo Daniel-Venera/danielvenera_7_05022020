@@ -1,0 +1,72 @@
+.section {
+    padding: 60px 0;
+    &__articleInfos {
+        text-align: right;
+        margin-bottom: 16px;
+    }
+    &__title {
+        margin-bottom: 48px;
+        text-align: center;
+        font-size: 36px;
+    }
+    &__content {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    &__hero {
+        margin-bottom: 24px;
+    }
+    &__infos {
+        text-align: center;
+    }
+    &__illu {
+        background-size: cover !important;
+        height: 300px;
+        margin-bottom: 60px;
+    }
+    &--hero {
+        text-align: center;
+        .section {
+            &__title {
+                margin-bottom: 36px;
+                font-size: 48px;
+            }
+        }
+    }
+    &--createPost,
+    &--article {
+        .form {
+            max-width: 700px;
+            margin: auto;
+            input,
+            textarea,
+            &__btn {
+                width: 100%;
+                border: 2px solid $grey;
+            }
+            input[type="file"] {
+                border: none;
+            }
+            .btn {
+                display: block;
+                margin-left: auto;
+            }
+        }
+    }
+    &--activity {
+        padding-top: 0;
+    }
+    &--article {
+        @include desktop-up {
+            padding: 0px 50px;
+        }
+        .section {
+            &__content {
+                text-align: left;
+            }
+        }
+        .btn {
+            margin-bottom: 48px;
+        }
+    }
+}

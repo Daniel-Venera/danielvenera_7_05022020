@@ -189,15 +189,14 @@ exports.deleteAll = (req, res) => {
     });
 };
 exports.login = (req, res) => {
-    console.log(req.body);
     if (!req.body.user_email) {
         res.status(400).send({
-            error: "Vous devez rentrer un email!"
+            error: "Vous devez rentrer un email"
         });
     }
     if (!req.body.user_password) {
         res.status(400).send({
-            error: "Vous devez rentrer un mot de passe!"
+            error: "Vous devez rentrer un mot de passe"
         });
     }
     User.login(req.body.user_email, (err, user) => {

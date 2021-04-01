@@ -77,6 +77,16 @@ exports.findAllToValidate = (req, res) => {
         else res.send(data);
     });
 };
+exports.findAllAdmin = (req, res) => {
+    Comment.getAllAdmin((err, data) => {
+        console.log(data);
+        if (err)
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving comments."
+            });
+        else res.send(data);
+    });
+};
 // Find a single comment with a commentId
 exports.findOne = (req, res) => {
     Comment.findById(req.params.postId, req.params.commentId, (err, data) => {

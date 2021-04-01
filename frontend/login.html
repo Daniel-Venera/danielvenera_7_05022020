@@ -5,21 +5,31 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
         <title>Document</title>
     </head>
     <body>
         <div id="root">
-            <span v-if="loginMessage">{{loginMessage}}</span>
-            <form @submit.prevent="login">
-                <input type="email" v-model="email" placeholder="Email" />
-                <input type="password" v-model="password" placeholder="Mot de passe" />
-                <button type="submit">Connexion</button>
-            </form>
-        </div>
-        <div>
-            <p>Pas de compte ? <a href="signup.html">Inscrivez-vous !</a></p>
+            <div class="section section--log">
+                <div class="container">
+                    <h1 class="section__title">
+                        Connexion
+                    </h1>
+                    <div class="form">
+                        <span v-if="error" class="form__message form__message--error">{{loginMessage}}</span>
+                        <form @submit.prevent="login">
+                            <input type="email" v-model="email" placeholder="Email" />
+                            <input type="password" v-model="password" placeholder="Mot de passe" />
+                            <button class="form__btn btn" type="submit">Connexion</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="section__content">
+                    <span>Pas de compte ? <a href="signup.html">Inscrivez-vous !</a></span>
+                </div>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="login.js"></script>
+        <script src="assets/js/login.js"></script>
     </body>
 </html>

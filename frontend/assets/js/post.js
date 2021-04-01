@@ -9,6 +9,7 @@ const postUrlApi = "http://localhost:3000/posts/" + postId;
 const userDataUrl = "http://localhost:3000/user/data";
 const validateUrlApi = "http://localhost:3000/posts/" + postId + "/validation";
 const commentUrlApi = "http://localhost:3000/posts/" + postId + "/comments";
+const likeUrlApi = "http://localhost:3000/posts/" + postId + "/likes";
 const commentUrlApiValidation = "http://localhost:3000/posts/" + postId + "/comments/validation";
 // options
 let optionsUserData = { method: "GET", headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } };
@@ -31,7 +32,7 @@ function postGetApi(url) {
         })
         .catch(err => console.error(err));
 }
-function commentGetApi(url) {
+function getApi(url) {
     return fetch(url)
         .then(function(response) {
             return response.json();
@@ -42,7 +43,23 @@ function commentGetApi(url) {
 let isPostValidate = true;
 let isAuthor = false;
 let comments = [];
+let likes = [];
+let hasLiked = false;
 function showPost(postData, currentUserId) {
+    postData.post_date_creation = new Date(postData.post_date_creation);
+    postData.post_date_creation = (postData.post_date_creation.getDate() < 10 ? "0" : "") + postData.post_date_creation.getDate() + "/" + (postData.post_date_creation.getMonth() < 10 ? "0" : "") + (postData.post_date_creation.getMonth() + 1) + "/" + postData.post_date_creation.getFullYear() + " à " + (postData.post_date_creation.getHours() < 10 ? "0" : "") + postData.post_date_creation.getHours() + ":" + (postData.post_date_creation.getMinutes() < 10 ? "0" : "") + postData.post_date_creation.getMinutes();
+    getApi(likeUrlApi).then(function(likeData) {
+        if (likeData.length > 0) {
+            likeData.forEach(e => {
+                likes.push(e);
+                if (e.user_id == currentUserId) {
+                    hasLiked = true;
+                }
+                console.log(e);
+                console.log(likes);
+            });
+        }
+    });
     if (postData.post_state == 0 && currentUserId !== 1) {
         location.href = "index.html";
     }
@@ -53,15 +70,16 @@ function showPost(postData, currentUserId) {
         isAuthor = true;
     }
     if (currentUserId == 1) {
-        commentGetApi(commentUrlApiValidation).then(function(data) {
+        getApi(commentUrlApiValidation).then(function(data) {
             if (data.length > 0) {
                 data.forEach(e => {
+                    console.log(e);
                     comments.push(e);
                 });
             }
         });
     } else {
-        commentGetApi(commentUrlApi).then(function(data) {
+        getApi(commentUrlApi).then(function(data) {
             if (data.length > 0) {
                 data.forEach(e => {
                     comments.push(e);
@@ -82,14 +100,16 @@ function showPost(postData, currentUserId) {
             currentUserId: currentUserId,
             isAuthor: isAuthor,
             isPostValidate: isPostValidate,
-            postInfos: {},
             options: {},
             updateMessage: "",
             comments: comments,
             comment: "",
-            commentInfos: {},
+            infos: {},
             commentState: currentUserId == 1 ? "1" : "0",
-            commentUrlValidationUpdate: ""
+            commentUrlValidationUpdate: "",
+            likes: likes,
+            updateArticleState: false,
+            hasLiked: hasLiked
         },
         methods: {
             validatePost() {
@@ -108,9 +128,12 @@ function showPost(postData, currentUserId) {
             updatePost() {
                 var self = this;
                 console.log(this.currentUserId);
-                this.postInfos = { user_id: this.post.user_id, post_title: this.post.post_title, post_content: this.post.post_content, post_state: this.currentUserId == 1 ? 1 : 0 };
-                console.log(this.postInfos);
-                this.options = { method: "put", body: JSON.stringify(this.postInfos), headers: { "Content-Type": "application/json" } };
+                console.log(this.post.user_id);
+                this.infos = { user_id: this.post.user_id, post_title: this.post.post_title, post_content: this.post.post_content, post_state: this.currentUserId == 1 ? 1 : 0 };
+                console.log("!!!!!");
+                console.log(this.infos);
+                console.log(":!!!");
+                this.options = { method: "put", body: JSON.stringify(this.infos), headers: { "Content-Type": "application/json" } };
                 fetch(postUrlApi, this.options)
                     .then(function(response) {
                         return response.json();
@@ -149,8 +172,8 @@ function showPost(postData, currentUserId) {
             commentPost() {
                 console.log(this.commentState);
                 var self = this;
-                this.commentInfos = { comment_content: this.comment, user_id: this.currentUserId, comment_state: this.commentState };
-                this.options = { method: "post", body: JSON.stringify(this.commentInfos), headers: { "Content-Type": "application/json" } };
+                this.infos = { comment_content: this.comment, user_id: this.currentUserId, comment_state: this.commentState };
+                this.options = { method: "post", body: JSON.stringify(this.infos), headers: { "Content-Type": "application/json" } };
                 fetch(commentUrlApi, this.options)
                     .then(function(response) {
                         return response.json();
@@ -180,8 +203,8 @@ function showPost(postData, currentUserId) {
             },
             updateComment(comment) {
                 var self = this;
-                this.commentInfos = { user_id: comment.user_id, post_id: postId, comment_content: comment.comment_content, comment_state: this.currentUserId == 1 ? 1 : 0 };
-                this.options = { method: "put", body: JSON.stringify(this.commentInfos), headers: { "Content-Type": "application/json" } };
+                this.infos = { user_id: comment.user_id, post_id: postId, comment_content: comment.comment_content, comment_state: this.currentUserId == 1 ? 1 : 0 };
+                this.options = { method: "put", body: JSON.stringify(this.infos), headers: { "Content-Type": "application/json" } };
                 fetch(commentUrlApi + "/" + comment.comment_id, this.options)
                     .then(function(response) {
                         return response.json();
@@ -222,6 +245,46 @@ function showPost(postData, currentUserId) {
                         })
                         .catch(err => console.error(err));
                 }
+            },
+            likePost() {
+                var self = this;
+                this.infos = { user_id: currentUserId, post_id: postId, like_state: 1 };
+                this.options = { method: "post", body: JSON.stringify(this.infos), headers: { "Content-Type": "application/json" } };
+                console.log(this.infos);
+                fetch(likeUrlApi, this.options)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(response) {
+                        console.log(response);
+                        self.likes.push(response);
+                        self.hasLiked = true;
+                    })
+                    .catch(err => console.error(err));
+            },
+            likeDelete() {
+                this.options = {
+                    method: "delete",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+                var self = this;
+                fetch("http://localhost:3000/posts/" + this.post.post_id + "/likes/user/" + this.currentUserId, this.options)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(response) {
+                        self.hasLiked = false;
+                        self.likes.length--;
+                    })
+                    .catch(err => console.error(err));
+            },
+            updateState() {
+                this.updateArticleState = true;
+            },
+            normalState() {
+                this.updateArticleState = false;
             }
         }
     });

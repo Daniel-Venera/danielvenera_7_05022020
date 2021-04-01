@@ -9,7 +9,8 @@ app = new Vue({
         signUpMessage: "",
         signUpInfos: {},
         urlApi: "http://localhost:3000/users",
-        options: {}
+        options: {},
+        signedUp: false
     },
     methods: {
         signUp: function() {
@@ -26,7 +27,8 @@ app = new Vue({
                 })
                 .then(function(response) {
                     console.log(response);
-                    self.signUpMessage = response.error ? response.error : "Merci ! Un administrateur validera votre inscription dans les prochains jours";
+                    self.signUpMessage = response.message ? response.message : "Merci ! Un administrateur validera votre inscription dans les prochains jours";
+                    self.signedUp = response.message ? false : true;
                 })
                 .catch(err => console.error(err));
         }

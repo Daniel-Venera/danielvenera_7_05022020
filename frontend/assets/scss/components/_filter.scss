@@ -1,0 +1,38 @@
+.filter {
+    margin: 48px 0;
+    text-align: center;
+    &__btnCnt {
+        padding: 0px 15px;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+    &__btn {
+        font-size: 24px;
+        background-color: white;
+        border: 2px solid $primary;
+        color: $primary;
+        &:hover {
+            color: white;
+            background-color: $primary;
+        }
+        &--active {
+            color: white;
+            background-color: $primary;
+            cursor: auto;
+            &:hover {
+                background-color: $primary;
+            }
+        }
+        &--validation {
+            border: 2px solid $grey;
+            color: $grey;
+            &:hover {
+                background-color: $grey;
+            }
+            &.filter__btn--active {
+                background-color: $grey;
+                color: white;
+            }
+        }
+    }
+}

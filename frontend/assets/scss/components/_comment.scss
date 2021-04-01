@@ -1,0 +1,13 @@
+.comment {
+    @extend .card;
+    max-width: 400px;
+    margin: 0 auto 16px;
+    border: 2px solid $grey;
+    &__body {
+        @extend .card__body;
+        border: none;
+    }
+    &__content {
+        margin-bottom: 8px;
+    }
+}

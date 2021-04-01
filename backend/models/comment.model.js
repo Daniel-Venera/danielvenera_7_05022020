@@ -116,6 +116,17 @@ Comment.getAllToValidate = result => {
         result(null, res);
     });
 };
+Comment.getAllAdmin = result => {
+    sql.query(`SELECT * FROM comments INNER JOIN users ON comments.user_id = users.user_id   WHERE comment_state = 1 OR comment_state = 3 ORDER BY comment_date_creation DESC;`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+        console.log("comments: ", res);
+        result(null, res);
+    });
+};
 Comment.updateById = (id, comment, result) => {
     sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = ${comment.comment_state} WHERE comment_id = ${id}`, (err, res) => {
         if (err) {

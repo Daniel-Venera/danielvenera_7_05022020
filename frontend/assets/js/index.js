@@ -21,7 +21,7 @@ if (urlParams.get("deleted_post")) {
 const posts = [];
 const urlApi = "http://localhost:3000/posts";
 function callApi(url) {
-    return fetch(url)
+    return fetch(url, { headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } })
         .then(function(response) {
             return response.json();
         })
@@ -33,11 +33,19 @@ function postsPush(data) {
         callApi(urlApi + "/" + e.post_id + "/comments").then(function(commentsData) {
             Array.from(commentsData).forEach(function(j) {
                 if (j.comment_state == 1) {
-                    commentLength = commentLength + 1;
+                    commentLength++;
                 }
             });
             e.comment_length = commentLength;
-            posts.push(e);
+            let likeLength = 0;
+            callApi(urlApi + "/" + e.post_id + "/likes").then(function(likesData) {
+                Array.from(likesData).forEach(function(j) {
+                    likeLength++;
+                });
+                e.like_length = likeLength;
+                e.post_date_creation = new Date(e.post_date_creation);
+                posts.push(e);
+            });
         });
     });
 }
@@ -51,7 +59,7 @@ callApi(urlApi).then(function(data) {
 app = new Vue({
     el: "#root",
     data: {
-        todos: posts,
+        posts: posts,
         message: message,
         postMessage: postMessage,
         state: "UserID ACTUEL = " + sessionStorage.getItem("userId")

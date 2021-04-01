@@ -10,6 +10,7 @@ const urlApi = "http://localhost:3000/users/" + userId;
 const validateUrlApi = "http://localhost:3000/users/" + userId + "/validation";
 const postsUrlApi = "http://localhost:3000/posts/user/" + userId;
 const commentsUrlApi = "http://localhost:3000/users/" + userId + "/comments";
+const likesUrlApi = "http://localhost:3000/users/" + userId + "/likes";
 // Options
 let optionsUserData = { method: "GET", headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } };
 // Api Calls
@@ -18,7 +19,6 @@ function callApiUserId(url, options) {
         .then(res => res.json())
         .catch(err => {
             location.href = "login.html";
-            console.log(err);
         });
 }
 function callApi(url) {
@@ -31,8 +31,9 @@ function callApi(url) {
         })
         .catch(err => console.error(err));
 }
-let userPosts = [];
+let posts = [];
 let userComments = [];
+let userLikes = [];
 callApiUserId(userDataUrl, optionsUserData).then(function(data) {
     let currentUserId = data.authorizedData.userId;
     callApi(urlApi).then(function(userData) {
@@ -42,7 +43,6 @@ callApiUserId(userDataUrl, optionsUserData).then(function(data) {
 let isCurrentUser = false;
 let isUserValidate = true;
 function showuser(userData, currentUserId) {
-    console.log(userData);
     if (userData.user_state == 0 && currentUserId != 1) {
         location.href = "index.html";
     } else if (currentUserId == 1 && userData.user_state == 0) {
@@ -52,15 +52,42 @@ function showuser(userData, currentUserId) {
         isCurrentUser = true;
     }
     callApi(postsUrlApi).then(function(data) {
-        data.forEach(e => {
-            userPosts.push(e);
-        });
+        if (data.length > 0) {
+            data.forEach(e => {
+                let commentLength = 0;
+                callApi("http://localhost:3000/posts/" + e.post_id + "/comments").then(function(commentsData) {
+                    Array.from(commentsData).forEach(function(j) {
+                        if (j.comment_state == 1) {
+                            commentLength++;
+                        }
+                    });
+                    e.comment_length = commentLength;
+                    let likeLength = 0;
+                    callApi("http://localhost:3000/posts/" + e.post_id + "/likes").then(function(likesData) {
+                        Array.from(likesData).forEach(function(j) {
+                            likeLength++;
+                        });
+                        e.like_length = likeLength;
+                        posts.push(e);
+                    });
+                });
+            });
+        }
     });
     callApi(commentsUrlApi).then(function(data) {
+        if (data.length > 0) {
+            data.forEach(e => {
+                userComments.push(e);
+            });
+        }
+    });
+    callApi(likesUrlApi).then(function(data) {
         console.log(data);
-        data.forEach(e => {
-            userComments.push(e);
-        });
+        if (data.length > 0) {
+            data.forEach(e => {
+                userLikes.push(e);
+            });
+        }
     });
     title = new Vue({
         el: "#title",
@@ -78,13 +105,15 @@ function showuser(userData, currentUserId) {
             lastName: userData.user_last_name,
             job: userData.user_job,
             email: userData.user_email,
-            userPosts: userPosts,
+            posts: posts,
             userComments: userComments,
+            userLikes: userLikes,
             password: "",
             updateMessage: "",
             userState: userData.user_state,
             updateInfos: {},
-            options: {}
+            options: {},
+            activity: "posts"
         },
         methods: {
             update() {
@@ -127,7 +156,6 @@ function showuser(userData, currentUserId) {
                             return response.json();
                         })
                         .then(function(response) {
-                            console.log(response);
                             if (self.isCurrentUser) {
                                 sessionStorage.clear();
                                 location.href = "login.html";
@@ -137,6 +165,9 @@ function showuser(userData, currentUserId) {
                         })
                         .catch(err => console.error(err));
                 }
+            },
+            filter(e) {
+                this.activity = e;
             }
         }
     });

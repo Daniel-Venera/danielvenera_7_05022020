@@ -43,7 +43,7 @@ User.findById = (userId, result) => {
     });
 };
 User.getAll = result => {
-    sql.query("SELECT * FROM users ORDER BY user_date_creation DESC", (err, res) => {
+    sql.query("SELECT * FROM users WHERE user_state = 1 ORDER BY user_date_creation DESC", (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);

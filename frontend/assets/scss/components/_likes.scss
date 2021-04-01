@@ -1,0 +1,8 @@
+.likes {
+    font-size: 20px;
+    text-align: right;
+    &__heart {
+        color: $red;
+        cursor: pointer;
+    }
+}

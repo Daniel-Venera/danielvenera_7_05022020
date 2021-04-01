@@ -6,59 +6,126 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title id="title">{{title}}</title>
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+        <link rel="stylesheet" href="assets/scss/style.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     </head>
     <body>
-        <header>
-            <nav>
-                <a href="index.html"><i class="fas fa-arrow-left"></i> <span> Retour à la home</span></a>
-                <div>
-                    <a href="createpost.html">Créer un article</a>
+        <div id="header">
+            <header>
+                <div class="container">
+                    <nav class="nav">
+                        <div>
+                            <a href="index.html">
+                                <img src="assets/img/logos/icon.png" class="nav__img" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                            </a>
+                        </div>
+                        <ul class="nav__items">
+                            <li class="nav__item">
+                                <a class="nav__link" href="createpost.html"><i class="fas fa-pen"></i></a>
+                            </li>
+                            <li class="nav__item" id="userId">
+                                <a class="nav__link" :href="`user.html?id=${userId}`"><i class="fas fa-user"></i></a>
+                            </li>
+                            <li class="nav__item" id="admin" v-if="admin">
+                                <a class="nav__link" href="admin.html" id="admin"><i class="fas fa-user-cog"></i></a>
+                            </li>
+                            <li class="nav__item">
+                                <a class="nav__link" id="logOut" @click="logOut"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div id="userId">
-                    <a :href="`user.html?id=${userId}`">Mon compte</a>
-                </div>
-                <button id="logOut">Déconnexion</button>
-                <div id="admin" v-if="admin">
-                    <a href="admin.html" id="admin">Espace Admin</a>
-                </div>
-            </nav>
-        </header>
-        <div id="root">
-            <span v-if="updateMessage">{{updateMessage}}</span>
-            <form v-if="isCurrentUser" @submit.prevent="update">
-                <input type="text" v-model="firstName" placeholder="Prénom" />
-                <input type="text" v-model="lastName" placeholder="Nom" />
-                <input type="text" v-model="job" placeholder="Poste" />
-                <input type="email" v-model="email" placeholder="Email" />
-                <input type="password" v-model="password" placeholder="mot de passe" />
-                <button type="submit" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">Mettre à jour</button>
-            </form>
-            <div v-else>
-                Prénom : {{firstName}} <br />
-                Nom : {{lastName}} <br />
-                Poste : {{job}} <br />
-                Email : {{email}} <br />
-            </div>
-            <button v-if="isCurrentUser || currentUserId == 1" @click="deleteUser">Supprimer le compte</button>
-            <button v-if="!isUserValidate" @click="validateUser">Valider le compte</button>
-            <h2>Articles</h2>
-            <ul v-if="userPosts.length > 0">
-                <li v-for="userPost in userPosts">
-                    <a :href="`post.html?id=${userPost.post_id}`">{{userPost.post_title}}</a>
-                </li>
-            </ul>
-            <span v-else>Aucun article</span>
-            <h2>Commentaires</h2>
-            <ul v-if="userComments.length > 0">
-                <li v-for="userComment in userComments">
-                    {{userComment.comment_content}} dans
-                    <a :href="`post.html?id=${userComment.post_id}`">cet article</a>
-                </li>
-            </ul>
-            <span v-else>Aucun commentaire</span>
+            </header>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <script src="user.js"></script>
-        <script src="main.js"></script>
+        <div id="root">
+            <main class="main">
+                <span v-if="updateMessage">{{updateMessage}}</span>
+                <section class="section section--hero ">
+                    <div class="container">
+                        <div class="section__hero">
+                            <form class="form" v-if="isCurrentUser" @submit.prevent="update">
+                                <h1 class="section__title">Mon Compte</h1>
+                                <input type="text" v-model="firstName" placeholder="Prénom" />
+                                <input type="text" v-model="lastName" placeholder="Nom" />
+                                <input type="text" v-model="job" placeholder="Poste" />
+                                <input type="email" v-model="email" placeholder="Email" />
+                                <input type="password" v-model="password" placeholder="mot de passe" />
+                                <button type="submit" class="btn btn--grey" :disabled="firstName.length < 1 || lastName.length < 1 || job.length < 1 || email.length < 1 || password.length < 1 ">Mettre à jour</button>
+                            </form>
+                            <div v-else>
+                                <h1 class="section__title">
+                                    {{firstName}} {{lastName}}
+                                </h1>
+                                <p class="section__infos">
+                                    {{job}} <br /><small class="section__infos"><a :href="`mailto:${email}`">{{email}}</a> </small>
+                                </p>
+                            </div>
+                        </div>
+                        <button v-if="!isUserValidate" @click="validateUser" class="btn btn--green">Valider le compte</button>
+                        <button v-if="isCurrentUser || currentUserId == 1" @click="deleteUser" class="btn btn--red">Supprimer le compte</button>
+                        <div class="filter">
+                            <span @click="filter('posts')" class="filter__btnCnt"><button class="filter__btn  btn" v-bind:class="{ 'filter__btn--active': activity == 'posts' }">Articles</button></span>
+                            <span @click="filter('comments')" class="filter__btnCnt"><button class="filter__btn btn" v-bind:class="{ 'filter__btn--active': activity == 'comments' }">Commentaires</button></span>
+                            <span @click="filter('likes')" class="filter__btnCnt"><button class="filter__btn btn" v-bind:class="{ 'filter__btn--active': activity == 'likes' }">Likes</button></span>
+                        </div>
+                    </div>
+                </section>
+                <section v-if="activity == 'posts' " class="section section--activity active" id="posts">
+                    <div class="container">
+                        <div v-if="posts.length > 0" class="cards">
+                            <div v-for="post in posts" class="cards__card card">
+                                <a :href="`post.html?id=${post.post_id}`" class="card__link"></a>
+                                <div class="card__illuCnt">
+                                    <div class="card__illu" style="background: url('assets/img/office.jpg') center center no-repeat; background-size: cover;"></div>
+                                </div>
+                                <div class="card__body">
+                                    <h2 class="card__title">
+                                        {{post.post_title}}
+                                    </h2>
+                                    <div>
+                                        <div class="card__infos">
+                                            <i class="fas fa-comment card__comment"></i>
+                                            <span class="card__number">{{post.comment_length}}</span>
+                                            <i class="fas fa-heart card__like"></i>
+                                            <span class="card__number">{{post.like_length}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p v-else class="section__infos">Aucun article</p>
+                    </div>
+                </section>
+                <section class="section section--activity" v-if="activity == 'comments' ">
+                    <div class="container">
+                        <div v-if="userComments.length > 0">
+                            <div v-for="userComment in userComments" class="comment">
+                                <div class="comment__body">
+                                    <em class="comment__content">{{userComment.comment_content}}</em>
+                                    <a :href="`post.html?id=${userComment.post_id}`" class="comment__link">Voir l'article</a>
+                                </div>
+                            </div>
+                        </div>
+                        <p v-else class="section__infos">Aucun commentaire</p>
+                    </div>
+                </section>
+                <section class="section section--activity" v-if="activity == 'likes' ">
+                    <div class="container">
+                        <div v-if="userLikes.length > 0">
+                            <div v-for="userLike in userLikes" class="comment">
+                                <div class="comment__body">
+                                    <a :href="`post.html?id=${userLike.post_id}`" class="comment__link">Voir l'article</a>
+                                </div>
+                            </div>
+                        </div>
+                        <p v-else class="section__infos">Aucun like</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <script src="assets/js/user.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/filters.js"></script>
     </body>
 </html>
