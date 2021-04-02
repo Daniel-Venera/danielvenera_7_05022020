@@ -60,7 +60,10 @@ app.get("/user/data", checkToken, (req, res) => {
     });
 });
 app.post("/upload", multer, (req, res) => {
-    res.json({ file: "Uploaded file" });
+    console.log("!!!!");
+    console.log(res);
+    console.log("!!!!");
+    res.json({ file: res.file.filename });
 });
 require("././routes/user.routes.js")(app);
 require("././routes/post.routes.js")(app);
