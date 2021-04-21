@@ -9,9 +9,9 @@ const storage = multer.diskStorage({
         callback(null, "uploads");
     },
     filename: (req, file, callback) => {
-        const name = file.originalname.split(" ").join("_") + Date.now();
+        const name = file.originalname.split(" ").join("_");
         const extension = MIME_TYPES[file.mimetype];
-        callback(null, name + "." + extension);
+        callback(null, Date.now() + name);
     }
 });
 module.exports = multer({ storage: storage }).single("file");

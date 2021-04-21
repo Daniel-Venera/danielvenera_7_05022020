@@ -90,7 +90,6 @@ exports.delete = (req, res) => {
 };
 exports.deleteOne = (req, res) => {
     Like.removeOne(req.params.postId, req.params.userId, (err, data) => {
-        console.log(req.params.postId);
         if (err) {
             res.status(500).send({
                 message: "Could not delete like "
@@ -100,7 +99,6 @@ exports.deleteOne = (req, res) => {
 };
 exports.findAllAdmin = (req, res) => {
     Like.getAllAdmin((err, data) => {
-        console.log(data);
         if (err)
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving likes."

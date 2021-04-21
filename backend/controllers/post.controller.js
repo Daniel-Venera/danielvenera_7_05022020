@@ -7,7 +7,6 @@ exports.create = (req, res) => {
             message: "Le contenu ne peut pas être vide!"
         });
     }
-    console.log(req);
     if (req.body.post_title.length > 150) {
         return res.status(400).json({ error: "Le titre doit contenir 150 caractères maximum" });
     }

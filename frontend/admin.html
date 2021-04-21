@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Espace Admin</title>
+        <link rel="shortcut icon" href="assets/img/logos/icon.png" type="image/x-icon" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
         <link rel="stylesheet" href="assets/scss/style.min.css" />
     </head>
@@ -15,8 +16,8 @@
                     <nav class="nav">
                         <div>
                             <a href="index.html">
-                                <img src="assets/img/logos/icon.png" class="nav__img" />
-                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                                <img src="assets/img/logos/icon.png" class="nav__img" alt="logo groupomania" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " alt="logo groupomania" />
                             </a>
                         </div>
                         <ul class="nav__items">
@@ -56,10 +57,12 @@
                                 <span @click="showValidation('commentsToValidate')" class="filter__btnCnt"><button class="filter__btn filter__btn--validation btn" v-bind:class="{ 'filter__btn--active': toValidate == 'commentsToValidate' }">Commentaires</button></span>
                             </div>
                             <div v-if="toValidate == 'usersToValidate'">
-                                <table v-if="usersToValidate.length > 0" class="table">
+                                <table v-if="usersToValidate.length > 0" class="table table--user ">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Date de création</th>
+                                            <th>Date de modification</th>
                                             <th>Prénom</th>
                                             <th>Nom</th>
                                             <th>E-mail</th>
@@ -70,6 +73,8 @@
                                     <tbody>
                                         <tr v-for="user in usersToValidate">
                                             <td>{{user.user_id}}</td>
+                                            <td>{{user.user_date_creation}}</td>
+                                            <td>{{user.user_date_update}}</td>
                                             <td>{{user.user_first_name}}</td>
                                             <td>{{user.user_last_name}}</td>
                                             <td>{{user.user_email}}</td>
@@ -81,10 +86,12 @@
                                 <span v-else>Il n'y a aucun utilisateur à valider</span>
                             </div>
                             <div v-if="toValidate == 'postsToValidate'">
-                                <table v-if="postsToValidate.length > 0" class="table">
+                                <table v-if="postsToValidate.length > 0" class="table table--posts">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Date de création</th>
+                                            <th>Date de modification</th>
                                             <th>Titre</th>
                                             <th>Auteur</th>
                                             <th></th>
@@ -93,20 +100,24 @@
                                     <tbody>
                                         <tr v-for="post in postsToValidate">
                                             <td>{{post.post_id}}</td>
+                                            <td>{{post.post_date_creation}}</td>
+                                            <td>{{post.post_date_update}}</td>
                                             <td>{{post.post_title}}</td>
                                             <td>{{post.user_first_name}} {{post.user_last_name}}</td>
                                             <td class="table__link"><a :href="`post.html?id=${post.post_id}`" class="btn">Voir</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <span v-else>Il n'y a aucun utilisateur à valider</span>
+                                <span v-else>Il n'y a aucun article à valider</span>
                             </div>
                             <div v-if="toValidate == 'commentsToValidate'">
-                                <table v-if="commentsToValidate.length > 0" class="table">
+                                <table v-if="commentsToValidate.length > 0" class="table table--comments">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>ID Article</th>
+                                            <th>Date de création</th>
+                                            <th>Date de modification</th>
                                             <th>Contenu</th>
                                             <th>Auteur</th>
                                             <th></th>
@@ -116,20 +127,24 @@
                                         <tr v-for="comment in commentsToValidate">
                                             <td>{{comment.comment_id}}</td>
                                             <td>{{comment.post_id}}</td>
+                                            <td>{{comment.comment_date_creation}}</td>
+                                            <td>{{comment.comment_date_update}}</td>
                                             <td>{{comment.comment_content}}</td>
                                             <td>{{comment.user_first_name}} {{comment.user_last_name}}</td>
                                             <td class="table__link"><a :href="`post.html?id=${comment.post_id}`" class="btn">Voir</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <span v-else>Il n'y a aucun utilisateur à valider</span>
+                                <span v-else>Il n'y a aucun commentaire à valider</span>
                             </div>
                         </div>
                         <div v-if="section == 'users'">
-                            <table class="table" v-if="users.length > 0">
+                            <table class="table table--user" v-if="users.length > 0">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Date de création</th>
+                                        <th>Date de modification</th>
                                         <th>Prénom</th>
                                         <th>Nom</th>
                                         <th>E-mail</th>
@@ -140,6 +155,8 @@
                                 <tbody>
                                     <tr v-for="user in users">
                                         <td>{{user.user_id}}</td>
+                                        <td>{{user.user_date_creation}}</td>
+                                        <td>{{user.user_date_update}}</td>
                                         <td>{{user.user_first_name}}</td>
                                         <td>{{user.user_last_name}}</td>
                                         <td>{{user.user_email}}</td>
@@ -159,6 +176,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Date de création</th>
+                                    <th>Date de modification</th>
                                     <th>Titre</th>
                                     <th>Auteur</th>
                                     <th></th>
@@ -168,6 +186,7 @@
                                 <tr v-for="post in posts">
                                     <td>{{post.post_id}}</td>
                                     <td>{{post.post_date_creation}}</td>
+                                    <td>{{post.post_date_update}}</td>
                                     <td>{{post.post_title}}</td>
                                     <td>{{post.user_first_name}} {{post.user_last_name}}</td>
                                     <td class="table__link"><a :href="`post.html?id=${post.post_id}`" class="btn btn">Voir</a></td>
@@ -175,10 +194,13 @@
                             </tbody>
                         </table>
                         <div v-if="section == 'comments'">
-                            <table class="table" v-if="comments.length > 0">
+                            <table class="table table--comments" v-if="comments.length > 0">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>ID Article</th>
+                                        <th>Date de création</th>
+                                        <th>Date de modification</th>
                                         <th>Contenu</th>
                                         <th>Auteur</th>
                                         <th></th>
@@ -187,6 +209,9 @@
                                 <tbody>
                                     <tr v-for="comment in comments">
                                         <td>{{comment.comment_id}}</td>
+                                        <td>{{comment.post_id}}</td>
+                                        <td>{{comment.comment_date_creation}}</td>
+                                        <td>{{comment.comment_date_update}}</td>
                                         <td>{{comment.comment_content}}</td>
                                         <td>{{comment.user_first_name}} {{comment.user_last_name}}</td>
                                         <td class="table__link">
@@ -200,10 +225,11 @@
                             </div>
                         </div>
                         <div v-if="section == 'likes'">
-                            <table class="table" v-if="likes.length > 0">
+                            <table class="table table--likes" v-if="likes.length > 0">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Date de création</th>
                                         <th>ID Article</th>
                                         <th>Auteur</th>
                                         <th></th>
@@ -212,6 +238,7 @@
                                 <tbody>
                                     <tr v-for="like in likes">
                                         <td>{{like.like_id}}</td>
+                                        <td>{{like.like_date_creation}}</td>
                                         <td>{{like.post_id}}</td>
                                         <td>{{like.user_first_name}} {{like.user_last_name}}</td>
                                         <td class="table__link">

@@ -22,7 +22,7 @@ function callApiUserId(url, options) {
         });
 }
 function callApi(url) {
-    return fetch(url)
+    return fetch(url, { headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } })
         .then(function(response) {
             if (response.status == 404) {
                 location.href = "index.html";
@@ -82,7 +82,6 @@ function showuser(userData, currentUserId) {
         }
     });
     callApi(likesUrlApi).then(function(data) {
-        console.log(data);
         if (data.length > 0) {
             data.forEach(e => {
                 userLikes.push(e);
@@ -117,8 +116,13 @@ function showuser(userData, currentUserId) {
         },
         methods: {
             update() {
-                this.updateInfos = { user_first_name: this.firstName, user_last_name: this.lastName, user_job: this.job, user_email: this.email, user_password: this.password, user_state: this.userState };
-                this.options = { method: "put", body: JSON.stringify(this.updateInfos), headers: { "Content-Type": "application/json" } };
+                var date = new Date();
+                var date = date
+                    .toISOString()
+                    .slice(0, 19)
+                    .replace("T", " ");
+                this.updateInfos = { user_first_name: this.firstName, user_last_name: this.lastName, user_job: this.job, user_email: this.email, user_password: this.password, user_state: this.userState, user_date_update: date };
+                this.options = { method: "put", body: JSON.stringify(this.updateInfos), headers: { "Content-Type": "application/json", Authorization: "Bearer " + sessionStorage.getItem("token") } };
                 var self = this;
                 fetch(urlApi, this.options)
                     .then(function(response) {
@@ -131,7 +135,7 @@ function showuser(userData, currentUserId) {
             },
             validateUser() {
                 var self = this;
-                this.options = { method: "put", headers: { "Content-Type": "application/json" } };
+                this.options = { method: "put", headers: { "Content-Type": "application/json", Authorization: "Bearer " + sessionStorage.getItem("token") } };
                 fetch(validateUrlApi, this.options)
                     .then(function(response) {
                         return response.json();
@@ -147,7 +151,8 @@ function showuser(userData, currentUserId) {
                     this.options = {
                         method: "delete",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            Authorization: "Bearer " + sessionStorage.getItem("token")
                         }
                     };
                     var self = this;

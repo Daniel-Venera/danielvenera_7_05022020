@@ -60,23 +60,80 @@
             content: "ID";
         }
         td:nth-of-type(2):before {
-            content: "Prénom";
+            content: "Date de création";
         }
         td:nth-of-type(3):before {
-            content: "Nom";
+            content: "Date de modification";
         }
         td:nth-of-type(4):before {
-            content: "E-mail";
+            content: "Prénom";
         }
         td:nth-of-type(5):before {
+            content: "Nom";
+        }
+        td:nth-of-type(6):before {
+            content: "E-mail";
+        }
+        td:nth-of-type(7):before {
             content: "Poste";
         }
         &--posts {
-            td:nth-of-type(2):before {
+            td:nth-of-type(4):before {
                 content: "Titre";
             }
-            td:nth-of-type(3):before {
+            td:nth-of-type(5):before {
                 content: "Auteur";
+            }
+            td:nth-of-type(6):before {
+                display: none;
+            }
+        }
+        &--comments {
+            td:nth-of-type(2):before {
+                content: "ID Article" !important;
+            }
+            td:nth-of-type(3):before {
+                content: "Date de création";
+            }
+            td:nth-of-type(4):before {
+                content: "Date de modification";
+            }
+            td:nth-of-type(5):before {
+                content: "Contenu";
+            }
+            td:nth-of-type(6):before {
+                content: "Auteur";
+            }
+            td:nth-of-type(7):before {
+                display: none;
+            }
+        }
+        &--likes {
+            td:nth-of-type(3):before {
+                content: "ID Article";
+            }
+            td:nth-of-type(4):before {
+                content: "Auteur";
+            }
+            td:nth-of-type(5):before {
+                display: none;
+            }
+        }
+        &--user {
+            td:nth-of-type(3):before {
+                content: "Date de modification";
+            }
+            td:nth-of-type(4):before {
+                content: "Prénom";
+            }
+            td:nth-of-type(5):before {
+                content: "Nom";
+            }
+            td:nth-of-type(6):before {
+                content: "E-mail";
+            }
+            td:nth-of-type(7):before {
+                content: "Poste";
             }
         }
     }

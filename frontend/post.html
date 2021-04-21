@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
         <link rel="stylesheet" href="assets/scss/style.min.css" />
         <title id="title">{{title}}</title>
+        <link rel="shortcut icon" href="assets/img/logos/icon.png" type="image/x-icon" />
     </head>
     <body>
         <div id="header">
@@ -15,8 +16,8 @@
                     <nav class="nav">
                         <div>
                             <a href="index.html">
-                                <img src="assets/img/logos/icon.png" class="nav__img" />
-                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                                <img src="assets/img/logos/icon.png" class="nav__img" alt="logo groupomania" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " alt="logo groupomania" />
                             </a>
                         </div>
                         <ul class="nav__items">
@@ -38,10 +39,10 @@
             </header>
         </div>
         <div id="root">
-            <span v-if="updateMessage">{{updateMessage}}</span>
             <main class="main">
                 <div class="container">
                     <div class="section section--article">
+                        <div v-if="updateMessage" class="alert"><span>{{updateMessage}}</span></div>
                         <div v-if="isAuthor && updateArticleState">
                             <form class="form form--updatePost" @submit.prevent="updatePost" enctype="multipart/form-data">
                                 <div>
@@ -59,45 +60,53 @@
                             <h1 class="section__title">{{post.post_title}}</h1>
                             <div class="section__content">{{post.post_content}}</div>
                             <p class="section__articleInfos">
-                                <em>
-                                    Écrit par {{post.user_first_name}} {{post.user_last_name}} le {{post.post_date_creation}}
-                                </em>
+                                <em> Écrit par <a :href="`user.html?id=${post.user_id}`">{{post.user_first_name}} {{post.user_last_name}} </a> le {{post.post_date_creation}} </em>
                             </p>
                         </div>
                         <p v-if="post.post_date_update" class="section__articleInfos">
-                            Modifié le : {{post.post_date_update}}
+                            <em>
+                                Modifié le : {{post.post_date_update}}
+                            </em>
                         </p>
                         <button v-if="!isPostValidate && currentUserId == 1" @click="validatePost" class="btn btn--green">Valider l'article</button>
                         <div class="likes">
-                            <span>{{likes.length}} <i v-if="hasLiked == true" class=" fas fa-heart likes__heart" @click="likeDelete"></i><i v-else class="far fa-heart likes__heart" @click="likePost"></i></span>
+                            <span>{{likes.length}} <i v-if="hasLiked.length > 0" class=" fas fa-heart likes__heart" @click="likeDelete"></i><i v-else class="far fa-heart likes__heart" @click="likePost"></i></span>
                         </div>
-                        <form v-if="isPostValidate" @submit.prevent="commentPost">
-                            <textarea v-model="comment" cols="30" rows="10"></textarea>
-                            <button type="submit">Commenter</button>
-                        </form>
                     </div>
-                    <section class="section section--article">
-                        <h2>
+                    <section class="section section--commentaire">
+                        <h2 class="section__title">
                             Commentaires
                         </h2>
+                        <div v-if="commentMessage" class="alert"><span>{{commentMessage}}</span></div>
+                        <h3 class="section__subtitle">Laisser un commentaire</h3>
+                        <form v-if="isPostValidate" @submit.prevent="commentPost" class="form--comment">
+                            <textarea v-model="comment" cols="30" rows="10"></textarea>
+                            <br />
+                            <button class="btn" type="submit">Commenter</button>
+                        </form>
                         <div v-if="comments.length > 0">
                             <ul>
                                 <li v-for="comment in comments" v-bind:id=" `comment${comment.comment_id}` ">
+                                    <div v-if="updateCommentMessage && comment == updatedComment" class="alert"><span>{{updateCommentMessage}}</span></div>
                                     <div v-if="comment.user_id == currentUserId && comment.comment_state == 1 && comment.comment_id ">
+                                        <a>Vous</a><br />
+                                        <span>{{comment.comment_date_creation}}</span><br />
+                                        <span v-if="comment.comment_date_update">Modifié le {{comment.comment_date_update}}</span>
                                         <form @submit.prevent="updateComment(comment)">
-                                            <textarea v-model="comment.comment_content" cols="30" rows="10">{{comment.comment_content}}</textarea>
-                                            <button type="submit">Modifier le commentaire</button>
+                                            <textarea v-model="comment.comment_content" cols="30" rows="10">{{comment.comment_content}}</textarea><br />
+                                            <button class="btn" type="submit">Modifier le commentaire</button>
                                         </form>
                                     </div>
-                                    <div v-else>
-                                        Auteur : <a :href="`user.html?id=${comment.user_id}`">{{comment.user_first_name}} {{comment.user_last_name}} </a> <br />
-                                        Date : {{comment.comment_date_creation}} <br />
-                                        <div v-if="comment.comment_date_update">
+                                    <div v-else class="comment">
+                                        <div class="comment__body">
+                                            <a :href="`user.html?id=${comment.user_id}`">{{comment.user_first_name}} {{comment.user_last_name}} </a>
+                                            <span>{{comment.comment_date_creation}}</span><br />
                                             <span v-if="comment.comment_date_update"> Modifié le : {{comment.comment_date_update}}</span>
+                                            {{comment.comment_content}} <br /><br />
                                         </div>
-                                        Contenu : {{comment.comment_content}} <br /><br />
                                     </div>
-                                    <button v-if="comment.comment_state == 0" v-on:click="validateComment(comment)">Valider le commentaire</button>
+                                    <button v-if="comment.comment_state == 0" v-on:click="validateComment(comment)" class="btn btn--green">Valider le commentaire</button>
+                                    <button v-if="comment.user_id == currentUserId || currentUserId ==  1" class="btn btn--red" type="submit" @click="deleteComment(comment)">Supprimer le commentaire</button>
                                     <br /><br />
                                 </li>
                             </ul>

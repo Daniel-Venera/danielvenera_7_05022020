@@ -7,6 +7,7 @@ const User = function(user) {
     this.user_state = user.user_state;
     this.user_email = user.user_email;
     this.user_password = user.user_password;
+    this.user_date_update = user.user_date_update;
 };
 User.create = (newUser, result) => {
     sql.query(`SELECT * FROM users WHERE user_email = '${newUser.user_email}'`, (err, res) => {
@@ -65,7 +66,7 @@ User.getAllToValidate = result => {
     });
 };
 User.updateById = (id, user, result) => {
-    sql.query("UPDATE users SET user_first_name = ?, user_last_name = ?, user_job = ?, user_email = ?, user_password = ?, user_state = ? WHERE user_id = ?", [user.user_first_name, user.user_last_name, user.user_job, user.user_email, user.user_password, user.user_state, id], (err, res) => {
+    sql.query("UPDATE users SET user_first_name = ?, user_last_name = ?, user_job = ?, user_email = ?, user_password = ?, user_state = ?, user_date_update = ? WHERE user_id = ?", [user.user_first_name, user.user_last_name, user.user_job, user.user_email, user.user_password, user.user_state, user.user_date_update, id], (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);

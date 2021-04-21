@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Créer un article</title>
+        <link rel="shortcut icon" href="assets/img/logos/icon.png" type="image/x-icon" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
         <link rel="stylesheet" href="assets/scss/style.min.css" />
     </head>
@@ -15,8 +16,8 @@
                     <nav class="nav">
                         <div>
                             <a href="index.html">
-                                <img src="assets/img/logos/icon.png" class="nav__img" />
-                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                                <img src="assets/img/logos/icon.png" class="nav__img" alt="logo groupomania" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " alt="logo groupomania" />
                             </a>
                         </div>
                         <ul class="nav__items">
@@ -42,14 +43,14 @@
                 <div class="section section--createPost">
                     <div class="container">
                         <h1 class="section__title">Créer un article</h1>
-                        <form class="form" @submit.prevent="onSubmit" enctype="multipart/form-data">
+                        <form class="form" @submit.prevent="onSubmit()" enctype="multipart/form-data">
                             <input type="text" v-model="post_title" placeholder="Titre" />
                             <textarea v-model="post_content" cols="30" rows="10" placeholder="Contenu"></textarea>
                             <label for="file">Image de couverture</label>
                             <input id="file" type="file" ref="file" accept="image/png,image/jpg,image/jpeg" @change="onSelect" />
+                            <div id="preview"></div>
                             <button type="submit" class="btn ">Publier</button>
                         </form>
-                        <button @click="onSubmit()">publier v2</button>
                     </div>
                 </div>
             </main>

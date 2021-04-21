@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title id="title">{{title}}</title>
+        <link rel="shortcut icon" href="assets/img/logos/icon.png" type="image/x-icon" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
         <link rel="stylesheet" href="assets/scss/style.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -16,8 +17,8 @@
                     <nav class="nav">
                         <div>
                             <a href="index.html">
-                                <img src="assets/img/logos/icon.png" class="nav__img" />
-                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                                <img src="assets/img/logos/icon.png" class="nav__img" alt="logo groupomania" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " alt="logo groupomania" />
                             </a>
                         </div>
                         <ul class="nav__items">
@@ -40,10 +41,10 @@
         </div>
         <div id="root">
             <main class="main">
-                <span v-if="updateMessage">{{updateMessage}}</span>
                 <section class="section section--hero ">
                     <div class="container">
                         <div class="section__hero">
+                            <div v-if="updateMessage" class="alert"><span>{{updateMessage}}</span></div>
                             <form class="form" v-if="isCurrentUser" @submit.prevent="update">
                                 <h1 class="section__title">Mon Compte</h1>
                                 <input type="text" v-model="firstName" placeholder="Prénom" />
@@ -77,7 +78,7 @@
                             <div v-for="post in posts" class="cards__card card">
                                 <a :href="`post.html?id=${post.post_id}`" class="card__link"></a>
                                 <div class="card__illuCnt">
-                                    <div class="card__illu" style="background: url('assets/img/office.jpg') center center no-repeat; background-size: cover;"></div>
+                                    <div class="card__illu" :style="[post.post_file !== null ? {'background': 'url(' + post.post_file + ') center center no-repeat'} : {'background': 'url(assets/img/logos/icon.png) center center no-repeat'} ]"></div>
                                 </div>
                                 <div class="card__body">
                                     <h2 class="card__title">

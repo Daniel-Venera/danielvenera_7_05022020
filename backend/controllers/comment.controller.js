@@ -79,7 +79,6 @@ exports.findAllToValidate = (req, res) => {
 };
 exports.findAllAdmin = (req, res) => {
     Comment.getAllAdmin((err, data) => {
-        console.log(data);
         if (err)
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving comments."

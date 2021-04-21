@@ -58,8 +58,9 @@
     }
     &--article {
         @include desktop-up {
-            padding: 0px 50px;
+            padding: 100px 50px 0;
         }
+        padding-top: 100px;
         .section {
             &__content {
                 text-align: left;
@@ -67,6 +68,23 @@
         }
         .btn {
             margin-bottom: 48px;
+        }
+    }
+    &--commentaire {
+        .section {
+            &__title {
+                text-align: left;
+                margin-bottom: 32px;
+            }
+            &__subtitle {
+                margin-bottom: 8px;
+            }
+        }
+        textarea {
+            border: 2px solid rgba(16, 16, 16, 0.3);
+        }
+        .comment {
+            margin-left: 0;
         }
     }
 }

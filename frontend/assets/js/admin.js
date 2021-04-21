@@ -12,7 +12,6 @@ fetch("http://localhost:3000/user/data", {
     })
     .catch(err => {
         location.href = "login.html";
-        console.log(err);
     });
 // To Validate
 const usersToValidate = [];
@@ -22,7 +21,7 @@ const userToValidatepostUrlApi = "http://localhost:3000/users/validation";
 const postToValidatepostUrlApi = "http://localhost:3000/posts/validation";
 const commentToValidatepostUrlApi = "http://localhost:3000/posts/comments/validation";
 function callApi(url) {
-    return fetch(url)
+    return fetch(url, { headers: { Authorization: "Bearer " + sessionStorage.getItem("token") } })
         .then(function(response) {
             return response.json();
         })
@@ -31,26 +30,50 @@ function callApi(url) {
 function pushData(data, typeOfData) {
     if (typeOfData == "postsToValidate") {
         data.forEach(e => {
+            e.post_date_creation = new Date(e.post_date_creation);
+            e.post_date_creation = e.post_date_creation.toLocaleDateString("fr-FR") + " à " + e.post_date_creation.getHours() + ":" + (e.post_date_creation.getMinutes() < 10 ? "0" : "") + e.post_date_creation.getMinutes();
+            if (e.post_date_update) {
+                e.post_date_update = new Date(e.post_date_update);
+                e.post_date_update = (e.post_date_update.getDate() < 10 ? "0" : "") + e.post_date_update.getDate() + "/" + (e.post_date_update.getMonth() < 10 ? "0" : "") + (e.post_date_update.getMonth() + 1) + "/" + e.post_date_update.getFullYear() + " à " + (e.post_date_update.getHours() < 8 ? "0" : "") + (e.post_date_update.getHours() + 2) + ":" + (e.post_date_update.getMinutes() < 10 ? "0" : "") + e.post_date_update.getMinutes();
+            }
             postsToValidate.push(e);
         });
     } else if (typeOfData == "usersToValidate") {
         data.forEach(e => {
+            e.user_date_creation = new Date(e.user_date_creation);
+            e.user_date_creation = e.user_date_creation.toLocaleDateString("fr-FR") + " à " + e.user_date_creation.getHours() + ":" + (e.user_date_creation.getMinutes() < 10 ? "0" : "") + e.user_date_creation.getMinutes();
+            if (e.user_date_update) {
+                e.user_date_update = new Date(e.user_date_update);
+                e.user_date_update = (e.user_date_update.getDate() < 10 ? "0" : "") + e.user_date_update.getDate() + "/" + (e.user_date_update.getMonth() < 10 ? "0" : "") + (e.user_date_update.getMonth() + 1) + "/" + e.user_date_update.getFullYear() + " à " + (e.user_date_update.getHours() < 8 ? "0" : "") + (e.user_date_update.getHours() + 2) + ":" + (e.user_date_update.getMinutes() < 10 ? "0" : "") + e.user_date_update.getMinutes();
+            }
             usersToValidate.push(e);
         });
     } else if (typeOfData == "commentsToValidate") {
         data.forEach(e => {
+            e.comment_date_creation = new Date(e.comment_date_creation);
+            e.comment_date_creation = e.comment_date_creation.toLocaleDateString("fr-FR") + " à " + e.comment_date_creation.getHours() + ":" + (e.comment_date_creation.getMinutes() < 10 ? "0" : "") + e.comment_date_creation.getMinutes();
             commentsToValidate.push(e);
         });
     } else if (typeOfData == "users") {
         data.forEach(e => {
+            e.user_date_creation = new Date(e.user_date_creation);
+            e.user_date_creation = e.user_date_creation.toLocaleDateString("fr-FR") + " à " + e.user_date_creation.getHours() + ":" + (e.user_date_creation.getMinutes() < 10 ? "0" : "") + e.user_date_creation.getMinutes();
+            if (e.user_date_update) {
+                e.user_date_update = new Date(e.user_date_update);
+                e.user_date_update = (e.user_date_update.getDate() < 10 ? "0" : "") + e.user_date_update.getDate() + "/" + (e.user_date_update.getMonth() < 10 ? "0" : "") + (e.user_date_update.getMonth() + 1) + "/" + e.user_date_update.getFullYear() + " à " + (e.user_date_update.getHours() < 8 ? "0" : "") + (e.user_date_update.getHours() + 2) + ":" + (e.user_date_update.getMinutes() < 10 ? "0" : "") + e.user_date_update.getMinutes();
+            }
             users.push(e);
         });
     } else if (typeOfData == "comments") {
         data.forEach(e => {
+            e.comment_date_creation = new Date(e.comment_date_creation);
+            e.comment_date_creation = e.comment_date_creation.toLocaleDateString("fr-FR") + " à " + e.comment_date_creation.getHours() + ":" + (e.comment_date_creation.getMinutes() < 10 ? "0" : "") + e.comment_date_creation.getMinutes();
             comments.push(e);
         });
     } else if (typeOfData == "likes") {
         data.forEach(e => {
+            e.like_date_creation = new Date(e.like_date_creation);
+            e.like_date_creation = e.like_date_creation.toLocaleDateString("fr-FR") + " à " + e.like_date_creation.getHours() + ":" + (e.like_date_creation.getMinutes() < 10 ? "0" : "") + e.like_date_creation.getMinutes();
             likes.push(e);
         });
     }
@@ -81,23 +104,13 @@ const commentUrlApi = "http://localhost:3000/posts/comments/admin";
 const likeUrlApi = "http://localhost:3000/posts/likes/admin";
 function postsPush(data) {
     data.forEach(e => {
-        let commentLength = 0;
-        callApi(postUrlApi + "/" + e.post_id + "/comments").then(function(commentsData) {
-            Array.from(commentsData).forEach(function(j) {
-                if (j.comment_state == 1) {
-                    commentLength++;
-                }
-            });
-            e.comment_length = commentLength;
-            let likeLength = 0;
-            callApi(postUrlApi + "/" + e.post_id + "/likes").then(function(likesData) {
-                Array.from(likesData).forEach(function(j) {
-                    likeLength++;
-                });
-                e.like_length = likeLength;
-                posts.push(e);
-            });
-        });
+        e.post_date_creation = new Date(e.post_date_creation);
+        e.post_date_creation = e.post_date_creation.toLocaleDateString("fr-FR") + " à " + e.post_date_creation.getHours() + ":" + (e.post_date_creation.getMinutes() < 10 ? "0" : "") + e.post_date_creation.getMinutes();
+        if (e.post_date_update) {
+            e.post_date_update = new Date(e.post_date_update);
+            e.post_date_update = (e.post_date_update.getDate() < 10 ? "0" : "") + e.post_date_update.getDate() + "/" + (e.post_date_update.getMonth() < 10 ? "0" : "") + (e.post_date_update.getMonth() + 1) + "/" + e.post_date_update.getFullYear() + " à " + (e.post_date_update.getHours() < 8 ? "0" : "") + (e.post_date_update.getHours() + 2) + ":" + (e.post_date_update.getMinutes() < 10 ? "0" : "") + e.post_date_update.getMinutes();
+        }
+        posts.push(e);
     });
 }
 callApi(postUrlApi).then(function(data) {
@@ -108,20 +121,16 @@ callApi(postUrlApi).then(function(data) {
     }
 });
 callApi(userUrlApi).then(function(data) {
-    console.log(data);
     if (data.length > 0) {
-        console.log("oui");
         pushData(data, "users");
     }
 });
 callApi(commentUrlApi).then(function(data) {
-    console.log(data);
     if (data.length > 0) {
         pushData(data, "comments");
     }
 });
 callApi(likeUrlApi).then(function(data) {
-    console.log(data);
     if (data.length > 0) {
         pushData(data, "likes");
     }

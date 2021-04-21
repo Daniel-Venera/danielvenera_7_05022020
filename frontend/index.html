@@ -5,7 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
-        <title>Document</title>
+        <title>Accueil</title>
+        <link rel="shortcut icon" href="assets/img/logos/icon.png" type="image/x-icon" />
         <link rel="stylesheet" href="assets/scss/style.min.css" />
     </head>
     <body>
@@ -15,8 +16,8 @@
                     <nav class="nav">
                         <div>
                             <a href="index.html">
-                                <img src="assets/img/logos/icon.png" class="nav__img" />
-                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " />
+                                <img src="assets/img/logos/icon.png" class="nav__img" alt="logo groupomania" />
+                                <img src="assets/img/logos/logo.png" class="nav__img nav__img--desktop " alt="logo groupomania" />
                             </a>
                         </div>
                         <ul class="nav__items">
@@ -42,19 +43,19 @@
                 <section class="section section--posts">
                     <div class="container">
                         <h1 class="section__title">Tous les articles</h1>
-                        <div v-if="message"><span>{{message}}</span></div>
+                        <div v-if="message" class="alert"><span>{{message}}</span></div>
                         <div class="cards">
                             <div v-for="post in posts" class="cards__card card">
                                 <a :href="`post.html?id=${post.post_id}`" class="card__link"></a>
                                 <div class="card__illuCnt">
-                                    <div class="card__illu" v-bind:style="[post.post_file ? {background: 'url(' + post.post_file + ')center center no-repeat'} : {background: 'url(assets/img/logos/icon.png) center center no-repeat'} ]"></div>
+                                    <div class="card__illu" :style="[post.post_file !== null ? {'background': 'url(' + post.post_file + ') center center no-repeat'} : {'background': 'url(assets/img/logos/icon.png) center center no-repeat'} ]"></div>
                                 </div>
                                 <div class="card__body">
                                     <h2 class="card__title">
                                         {{post.post_title}}
                                     </h2>
                                     <div>
-                                        <span class="card__author"> Écrit par: <a :href="`user.html?id=${post.user_id}`">{{post.user_first_name}}</a> le {{post.post_date_creation }} </span>
+                                        <span class="card__author"> Écrit par: <a :href="`user.html?id=${post.user_id}`">{{post.user_first_name}}</a> le {{post.post_date_creation.toLocaleDateString("fr-FR") }} à {{post.post_date_creation.getHours() }}:{{(post.post_date_creation.getMinutes() < 10 ? '0' : '') + post.post_date_creation.getMinutes() }} </span>
                                         <div class="card__infos">
                                             <i class="fas fa-comment card__comment"></i>
                                             <span class="card__number">{{post.comment_length}}</span>

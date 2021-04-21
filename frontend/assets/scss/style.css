@@ -56,6 +56,20 @@ a:hover {
   color: #f93104;
 }
 
+.form__back {
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.form--updatePost {
+  text-align: left;
+}
+
+.form--comment {
+  margin-bottom: 24px;
+}
+
 .container, .main {
   padding: 0 30px;
   margin: 0 auto;
@@ -91,7 +105,7 @@ a:hover {
 
 .section__articleInfos {
   text-align: right;
-  padding-right: 20px;
+  margin-bottom: 16px;
 }
 
 .section__title {
@@ -116,6 +130,7 @@ a:hover {
 .section__illu {
   background-size: cover !important;
   height: 300px;
+  margin-bottom: 60px;
 }
 
 .section--hero {
@@ -127,22 +142,23 @@ a:hover {
   font-size: 48px;
 }
 
-.section--createPost .form {
+.section--createPost .form, .section--article .form {
   max-width: 700px;
   margin: auto;
 }
 
 .section--createPost .form input,
-.section--createPost .form textarea, .section--createPost .form__btn {
+.section--createPost .form textarea, .section--createPost .form__btn, .section--article .form input,
+.section--article .form textarea, .section--article .form__btn {
   width: 100%;
   border: 2px solid rgba(16, 16, 16, 0.3);
 }
 
-.section--createPost .form input[type="file"] {
+.section--createPost .form input[type="file"], .section--article .form input[type="file"] {
   border: none;
 }
 
-.section--createPost .form .btn {
+.section--createPost .form .btn, .section--article .form .btn {
   display: block;
   margin-left: auto;
 }
@@ -151,7 +167,39 @@ a:hover {
   padding-top: 0;
 }
 
+@media (min-width: 1200px) {
+  .section--article {
+    padding: 0px 50px;
+  }
+}
+
+.section--article .section__content {
+  text-align: left;
+}
+
+.section--article .btn {
+  margin-bottom: 48px;
+}
+
+.section--commentaire .section__title {
+  text-align: left;
+  margin-bottom: 32px;
+}
+
+.section--commentaire .section__subtitle {
+  margin-bottom: 8px;
+}
+
+.section--commentaire textarea {
+  border: 2px solid rgba(16, 16, 16, 0.3);
+}
+
+.section--commentaire .comment {
+  margin-left: 0;
+}
+
 .btn {
+  margin-bottom: 16px;
   border: none;
   padding: 10px 20px;
   background-color: #24314a;
@@ -335,6 +383,10 @@ a:hover {
   padding: 0;
 }
 
+.content {
+  padding-top: 48px;
+}
+
 .comment {
   max-width: 400px;
   margin: 0 auto 16px;
@@ -465,22 +517,76 @@ a:hover {
     content: "ID";
   }
   .table td:nth-of-type(2):before {
-    content: "Prénom";
+    content: "Date de création";
   }
   .table td:nth-of-type(3):before {
-    content: "Nom";
+    content: "Date de modification";
   }
   .table td:nth-of-type(4):before {
-    content: "E-mail";
+    content: "Prénom";
   }
   .table td:nth-of-type(5):before {
+    content: "Nom";
+  }
+  .table td:nth-of-type(6):before {
+    content: "E-mail";
+  }
+  .table td:nth-of-type(7):before {
     content: "Poste";
   }
-  .table--posts td:nth-of-type(2):before {
+  .table--posts td:nth-of-type(4):before {
     content: "Titre";
   }
-  .table--posts td:nth-of-type(3):before {
+  .table--posts td:nth-of-type(5):before {
     content: "Auteur";
+  }
+  .table--posts td:nth-of-type(6):before {
+    display: none;
+  }
+  .table--comments {
+    color: red;
+  }
+  .table--comments td:nth-of-type(2):before {
+    content: "ID Article" !important;
+  }
+  .table--comments td:nth-of-type(3):before {
+    content: "Date de création";
+  }
+  .table--comments td:nth-of-type(4):before {
+    content: "Date de modification";
+  }
+  .table--comments td:nth-of-type(5):before {
+    content: "Contenu";
+  }
+  .table--comments td:nth-of-type(6):before {
+    content: "Auteur";
+  }
+  .table--comments td:nth-of-type(7):before {
+    display: none;
+  }
+  .table--likes td:nth-of-type(3):before {
+    content: "ID Article";
+  }
+  .table--likes td:nth-of-type(4):before {
+    content: "Auteur";
+  }
+  .table--likes td:nth-of-type(5):before {
+    display: none;
+  }
+  .table--userToValidate td:nth-of-type(3):before {
+    content: "Prénom";
+  }
+  .table--userToValidate td:nth-of-type(4):before {
+    content: "Nom";
+  }
+  .table--userToValidate td:nth-of-type(5):before {
+    content: "E-mail";
+  }
+  .table--userToValidate td:nth-of-type(6):before {
+    content: "Poste";
+  }
+  .table--userToValidate td:nth-of-type(7):before {
+    display: none;
   }
 }
 
@@ -536,6 +642,7 @@ a:hover {
 }
 
 #header .nav__item {
+  cursor: pointer;
   padding: 8px;
   font-size: 32px;
 }
@@ -550,5 +657,34 @@ a:hover {
 
 #header a {
   color: #f93104;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding-top: 16px;
+  z-index: 999;
+}
+
+.likes {
+  font-size: 20px;
+  text-align: right;
+}
+
+.likes__heart {
+  color: #f93104;
+  cursor: pointer;
+}
+
+.alert {
+  background-color: #13a05f;
+  margin-bottom: 24px;
+  padding: 16px;
+  color: white;
+}
+
+#preview .previewImg {
+  max-width: 100%;
 }
 /*# sourceMappingURL=style.css.map */

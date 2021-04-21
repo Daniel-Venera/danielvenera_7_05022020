@@ -125,7 +125,6 @@ exports.update = (req, res) => {
             bcrypt
                 .hash(req.body.user_password, 10)
                 .then(hash => {
-                    console.log(hash);
                     User.updateById(req.params.userId, new User({ ...req.body, user_password: hash }), (err, data) => {
                         if (err) {
                             if (err.kind === "not_found") {
@@ -200,8 +199,6 @@ exports.login = (req, res) => {
         });
     }
     User.login(req.body.user_email, (err, user) => {
-        console.log("user :");
-        console.log(user);
         if (err) {
             if (err.kind == "user_state_0") {
                 res.status(401).send({
@@ -217,23 +214,18 @@ exports.login = (req, res) => {
             bcrypt
                 .compare(req.body.user_password, user.user_password)
                 .then(valid => {
-                    console.log("debut bcrypt");
                     if (!valid) {
-                        console.log("mot de passe invalide");
                         res.status(401).json({
                             error: "Mot de passe incorrect"
                         });
                         return;
                     }
-                    console.log("milieu bcrypt");
                     req.session.loggedin = true;
-                    console.log(jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" }));
                     res.status(200).json({
                         userId: user.user_id,
                         token: jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" })
                     });
                     // res.redirect("/");
-                    console.log("fin bcrypt");
                 })
                 .catch(error => res.status(500).json({ error }));
         }

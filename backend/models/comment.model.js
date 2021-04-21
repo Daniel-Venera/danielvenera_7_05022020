@@ -5,13 +5,9 @@ const Comment = function(comment) {
     this.post_id = comment.post_id;
     this.comment_content = comment.comment_content;
     this.comment_state = comment.comment_state;
+    this.comment_date_update = comment.comment_date_update;
 };
 //Date
-var dateObj = new Date();
-var month = (dateObj.getUTCMonth() + 1).toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false }); //months from 1-12
-var day = dateObj.getUTCDate();
-var year = dateObj.getUTCFullYear();
-var newdate = year + "-" + month + "-" + day;
 //Functions
 Comment.create = (newComment, result) => {
     sql.query(`SELECT * FROM users WHERE user_id = ${newComment.user_id}`, (err, res) => {
@@ -128,7 +124,7 @@ Comment.getAllAdmin = result => {
     });
 };
 Comment.updateById = (id, comment, result) => {
-    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${newdate}', comment_state = ${comment.comment_state} WHERE comment_id = ${id}`, (err, res) => {
+    sql.query(`UPDATE comments SET user_id = ${comment.user_id}, post_id = ${comment.post_id}, comment_content = '${comment.comment_content}', comment_date_update = '${comment.comment_date_update}', comment_state = ${comment.comment_state} WHERE comment_id = ${id}`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(null, err);
