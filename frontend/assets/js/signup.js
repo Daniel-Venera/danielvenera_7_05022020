@@ -26,8 +26,8 @@ app = new Vue({
                     return response.json();
                 })
                 .then(function(response) {
-                    self.signUpMessage = response.message ? response.message : "Merci ! Un administrateur validera votre inscription dans les prochains jours";
-                    self.signedUp = response.message ? false : true;
+                    self.signUpMessage = response.error ? response.error : "Merci ! Un administrateur validera votre inscription dans les prochains jours";
+                    self.signedUp = response.error ? false : true;
                 })
                 .catch(err => console.error(err));
         }

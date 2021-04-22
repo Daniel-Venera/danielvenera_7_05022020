@@ -23,7 +23,7 @@ User.create = (newUser, result) => {
                 result(null, { user_id: res.insertId, ...newUser });
             });
         } else {
-            result(null, { message: "Un compte existe déjà avec cette adresse mail" });
+            result(null, { error: "Un compte existe déjà avec cette adresse mail" });
         }
     });
 };
