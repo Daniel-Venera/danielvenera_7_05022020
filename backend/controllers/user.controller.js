@@ -225,7 +225,7 @@ exports.login = (req, res) => {
                         userId: user.user_id,
                         token: jwt.sign({ userId: user.user_id }, "RANDOM_TOKEN_SECRET", { expiresIn: "24h" })
                     });
-                    // res.redirect("/");
+                    res.redirect("/");
                 })
                 .catch(error => res.status(500).json({ error }));
         }
